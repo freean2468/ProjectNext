@@ -15,3 +15,6 @@
 local.properties
 python/.idea
 python/venv
+
+# aws
+/aws/*.zip
