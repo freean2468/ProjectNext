@@ -22,10 +22,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.widget.CompoundButton.*;
-
 public class MainActivity extends AppCompatActivity {
-
     private TextView ipView;
     private Switch switchChangeIp;
     private Spinner spinnerDropdownMenu;
@@ -60,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     ipView.setText(R.string.localhost);
                     url = ipView.getText().toString();
+                    sendRequest();
                 }
                 else
                 {
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
         buttonSelect.setOnClickListener(v->{
             selectAlgorithmView.setText(buttonSelect.getText());
-
         });
 
 
@@ -118,13 +115,13 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //println("응답 -> " + response);
+                        println("응답 -> " + response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //println("에러 -> " + error.getMessage());
+                        println("에러 -> " + error.getMessage());
                     }
                 }
         ) {
@@ -139,7 +136,12 @@ public class MainActivity extends AppCompatActivity {
         request.setShouldCache(false);
         AppHelper.requestQueue = Volley.newRequestQueue(this); // requestQueue 초기화 필수
         AppHelper.requestQueue.add(request);
-
     }
+
+    public void println(String data)
+    {
+        selectAlgorithmView.setText(data +"\n");
+    }
+
 }
 
