@@ -12,7 +12,7 @@ create table if not exists ticker_table(
 
 create table if not exists daily_table(
 	ticker varchar(6) not null,
-	date Date unique not null,
+	date Date not null,
 	open double not null,
     high double not null,
     low double not null,
@@ -23,7 +23,7 @@ create table if not exists daily_table(
 );
 
 select * from ticker_table;
-select * from daily_table;
+select * from daily_table where ticker="riot";
 select count(*) from daily_table;
 
 
