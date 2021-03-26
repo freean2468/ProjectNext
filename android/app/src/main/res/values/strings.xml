@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">ProjectNext</string>
+    <string name="localhost">http://11.10.2.22:8080/</string>
+    <string name="test_server">http://192.168.0.10/</string>
+
+    <string-array name="algoRithm">
+        <item>알고리즘1</item>
+        <item>알고리즘2</item>
+        <item>알고리즘3</item>
+        <item>알고리즘4</item>
+        <item>알고리즘5</item>
+    </string-array>
+
 </resources>
