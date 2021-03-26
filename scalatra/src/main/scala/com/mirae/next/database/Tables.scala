@@ -27,7 +27,7 @@ object Tables {
 
     def pkTicker = primaryKey("pk_ticker", ticker)
 
-    def * = ticker <> (Ticker.apply _, Ticker.unapply)
+    def * = ticker <> (Ticker.apply, Ticker.unapply)
   }
 
   val tickers = TableQuery[Tickers]

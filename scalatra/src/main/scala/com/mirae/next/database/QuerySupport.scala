@@ -44,8 +44,14 @@ trait QuerySupport {
   /** Read
    *
    */
-  def selectAll() =
-    db.run(sql"select * from daily_table".as[(String, String, Double, Double, Double, Double, Int)])
+  def selectTicker(ticker: String) =
+    db.run(tickers.filter(_.ticker === ticker).result)
+
+  def selectTickerAll() =
+    db.run(tickers.result)
+
+  def selectDailyAll() =
+    db.run(dailies.result)
 
   // def find(no: String) = db.run((for (account <- accounts if account.no === no) yield account).result.headOption) // imperative way
   def findDaily(date: String) =

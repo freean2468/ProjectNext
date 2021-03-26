@@ -16,9 +16,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.sql.DriverManager.println;
-
-
 public class MainActivity extends AppCompatActivity {
     TextView respond_View;
     Button request_Button;
