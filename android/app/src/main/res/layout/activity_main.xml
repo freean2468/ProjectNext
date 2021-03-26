@@ -7,20 +7,43 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/request_Button"
+    <Switch
+        android:id="@+id/switchChangeIp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="요청 하기" />
+        android:text="IP주소 변경 테스트" />
 
     <TextView
-        android:id="@+id/respond_View"
-        android:layout_width="wrap_content"
+        android:id="@+id/ipView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="응답 내용"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="IP주소 출력" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id = "@+id/spinnerDropdownMenu"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left">
+        </Spinner>
+
+        <Button
+            android:id = "@+id/buttonSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text = "선택">
+        </Button>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/selectAlgorithmView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="선택된 알고리즘">
+    </TextView>
 
 </LinearLayout>
