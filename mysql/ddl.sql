@@ -17,14 +17,11 @@ create table if not exists daily_table(
     high double not null,
     low double not null,
     close double not null,
-    volume int not null,
+    volume bigint unsigned not null,
     constraint pk_ticker_date primary key(ticker, date),
     constraint fk_ticker foreign key(ticker) references ticker_table(ticker) on update cascade on delete cascade
 );
 
 select * from ticker_table;
-select * from daily_table where ticker="riot";
+select * from daily_table;
 select count(*) from daily_table;
-
-
-

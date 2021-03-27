@@ -8,7 +8,6 @@ import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.Promise
 import scala.util.{Failure, Success, Try}
 
-
 /** Tables의 모방 테이블을 활용한 쿼리문 지원하는 trait, Route class에 mixing in!
  *
  * @param db 첫 servlet 생성 시 전달된 db config
@@ -46,6 +45,9 @@ trait QuerySupport {
    */
   def selectTicker(ticker: String) =
     db.run(tickers.filter(_.ticker === ticker).result)
+
+  def selectDaily(ticker: String) =
+    db.run(dailies.filter(_.ticker === ticker).result)
 
   def selectTickerAll() =
     db.run(tickers.result)

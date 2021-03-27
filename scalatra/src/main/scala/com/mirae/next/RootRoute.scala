@@ -6,10 +6,10 @@ import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
 import org.scalatra.servlet.{FileUploadSupport, MultipartConfig}
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import slick.jdbc.JdbcBackend.Database
-import scala.xml.{Elem, Node, Text}
 
+import scala.xml.{Elem, Node}
 import java.sql.SQLIntegrityConstraintViolationException
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -25,13 +25,14 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
   /** get
    *
    */
-
   get("/") {
     displayPage("project next 서버에 오신 것을 환영합니다.",
       <p>다음과 같은 경로에 서비스가 제공됩니다.</p>
         <p>get : </p>
         <p>/dailies : daily 정보를 서버로부터 불러옵니다.</p>
         <p>/tickers : ticker 정보를 서버로부터 불러옵니다. </p>
+        <p>/daily/1?ticker='' : ticker의 daily 정보를 불러옵니다.</p>
+        <p>/ticker/1?ticker='' : ticker를 불러옵니다.</p>
         <br></br>
         <p>post : </p>
         <p>/daily/1?ticker=''&amp;date=''&amp;open=''&amp;high=''&amp;low=''
@@ -58,11 +59,22 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
     }
   }
 
-  get("/ticker") {
+  get("/ticker/1?") {
     new AsyncResult { override val is =
       Future {
         contentType = formats("json")
         selectTicker(params.getOrElse("ticker", halt(400)))
+      }
+    }
+  }
+
+  get("/daily/1?") {
+    new AsyncResult { override val is =
+      Future {
+        contentType = formats("json")
+        val logger = LoggerFactory.getLogger(getClass)
+        logger.info(params.get("ticker").get)
+        selectDaily(params.getOrElse("ticker", halt(400)))
       }
     }
   }
@@ -92,7 +104,7 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
         val high = params.getOrElse("high", "").toDouble
         val low = params.getOrElse("low", "").toDouble
         val close = params.getOrElse("close", "").toDouble
-        val volume = params.getOrElse("volume", "").toInt
+        val volume = params.getOrElse("volume", "").toLong
 
         insertDaily(Daily(ticker, date, open, high, low, close, volume))
       }

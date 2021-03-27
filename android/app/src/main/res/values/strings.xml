@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">ProjectNext</string>
-    <string name="localhost">http://10.0.2.2:8080/dailies</string>
-    <string name="test_server">http://192.168.0.10/</string>
+
+    <string name="host_name_for_service">아직 사용하지 말 것http://next.ap-northeast-2.elasticbeanstalk.com/</string>
+    <string name="host_name_for_development">http://10.0.2.2:8080/</string>
+    <string name="host_name_in_mirae">http://192.168.0.10:8080/</string>
+
+    <string name="url_tickers_all">tickers</string>
+    <string name="url_dailies_all">dailies</string>
+    <string name="url_daily">daily/1?</string>
 
     <string-array name="algoRithm">
         <item>알고리즘1</item>

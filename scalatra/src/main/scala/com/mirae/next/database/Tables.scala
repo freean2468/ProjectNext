@@ -20,7 +20,7 @@ object Tables {
    * @param close 종가 not null
    * @param volume 거래량 not null
    */
-  case class Daily(ticker: String, date: String, open: Double, high: Double, low: Double, close: Double, volume: Int)
+  case class Daily(ticker: String, date: String, open: Double, high: Double, low: Double, close: Double, volume: Long)
 
   class Tickers(tag: Tag) extends Table[Ticker](tag, "ticker_table") {
     def ticker = column[String]("ticker")
@@ -44,7 +44,7 @@ object Tables {
     def high = column[Double]("high")
     def low = column[Double]("low")
     def close = column[Double]("close")
-    def volume = column[Int]("volume")
+    def volume = column[Long]("volume")
 
     def pkTickerDate = primaryKey("pk_ticker_date", (ticker, date))
     def fkTicker = foreignKey("fk_ticker", ticker, tickers)(_.ticker,
