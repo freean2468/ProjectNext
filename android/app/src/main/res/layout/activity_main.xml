@@ -6,51 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.ActivityMain">
 
-    <Switch
-        android:id="@+id/switchChangeIp"
+    <androidx.viewpager2.widget.ViewPager2
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/viewPager2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="접속 호스트 변경" />
-
-    <TextView
-        android:id="@+id/textViewHost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Host 주소" />
-
-    <Spinner
-        android:id = "@+id/spinnerTickers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </Spinner>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id = "@+id/spinnerDropdownMenu"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left">
-        </Spinner>
-
-        <Button
-            android:id = "@+id/buttonSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text = "선택">
-        </Button>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/selectAlgorithmView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="선택된 알고리즘">
-    </TextView>
-
+        android:layout_height="match_parent" />
 </LinearLayout>

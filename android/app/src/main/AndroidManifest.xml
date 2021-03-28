@@ -11,7 +11,7 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectNext">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.ActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
