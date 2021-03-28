@@ -22,6 +22,7 @@ import com.anychart.core.stock.Plot;
 import com.anychart.core.stock.series.Line;
 import com.anychart.core.stock.series.OHLC;
 import com.anychart.data.Table;
+import com.anychart.enums.MovingAverageType;
 import com.mrhi.projectnext.R;
 import com.mrhi.projectnext.model.ModelTicker;
 import com.mrhi.projectnext.object.ObjectAlgorithm;
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                         anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.MATCH_PARENT));
+                        anyChartView.setPadding(10, 0, 0, 0);
 
                         anyChartViewId = ViewCompat.generateViewId();
                         anyChartView.setId(anyChartViewId);
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                                 Date date = formatter.parse(formatter.format(daily.getDate()));
                                 data.add(new OHCLDataEntry(date.getTime(), daily.getOpen(), daily.getHigh(),
-                                        daily.getLow(), daily.getClose()));
+                                        daily.getLow(), daily.getClose(), daily.getVolume()));
                             } catch (ParseException pe) {
                                 pe.printStackTrace();
                             }
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                         Table table = Table.instantiate("x");
                         table.addData(data);
 
-                        TableMapping mapping = table.mapAs("{open: 'open', high: 'high', low: 'low', close: 'close'}");
+                        TableMapping mapping = table.mapAs("{open: 'open', high: 'high', low: 'low', close: 'close', volume: 'volume'}");
 
                         Stock stock = AnyChart.stock();
 
@@ -169,24 +171,26 @@ public class MainActivity extends AppCompatActivity {
                                 .xGrid(true)
                                 .yMinorGrid(true)
                                 .xMinorGrid(true);
-//
-//                        // create and setup volume plot
-//                        Plot volumePlot = stock.plot(1);
-//                        volumePlot.height("30%");
-////                        volumePlot.yAxis().labels().format("${%Value}{scale:(1000000)(1000)|(kk)(k)}");
-//                        Table volumeTable = Table.instantiate("x");
-//                        volumeTable.addData(data);
-//
-//                        TableMapping volumeMapping = table.mapAs("{volume: 'volume'}");
 
                         // 이동평균선
-                        plot.ema(table.mapAs("{value: 'close'}"), 20d, StockSeriesType.CANDLESTICK);
+                        plot.ema(table.mapAs("{value: 'close'}"), 20d, StockSeriesType.LINE);
 
                         plot.ohlc(mapping)
                                 .name(selectedTicker)
                                 .legendItem("{\n" +
                                         "        iconType: 'rising-falling'\n" +
                                         "      }");
+
+                        Plot plot2 = stock.plot(1);
+                        plot2.yGrid(true)
+                                .xGrid(true)
+                                .yMinorGrid(true)
+                                .xMinorGrid(true)
+                                .height("30%")
+                                .yAxis(0).labels().format("{%Value}{scale:(1000)|(k)}");;
+
+//                        "step-line"
+                        plot2.volumeMa(mapping, 20d, MovingAverageType.EMA, StockSeriesType.COLUMN, StockSeriesType.LINE);
 
                         stock.scroller().ohlc(mapping);
 
@@ -214,10 +218,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class OHCLDataEntry extends HighLowDataEntry {
-        OHCLDataEntry(Long x, Double open, Double high, Double low, Double close) {
+        OHCLDataEntry(Long x, Double open, Double high, Double low, Double close, Long volume) {
             super(x, high, low);
             setValue("open", open);
             setValue("close", close);
+            setValue("volume", volume);
         }
     }
 }
