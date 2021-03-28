@@ -13,6 +13,9 @@ import com.mrhi.projectnext.fragment.FragmentAlgorithmResult;
 import com.mrhi.projectnext.fragment.FragmentMain;
 
 public class ActivityMain extends FragmentActivity {
+    public static final int PAGES = 2;
+    public static final int PAGE_MAIN = 0;
+    public static final int PAGE_ALGORITHM_RESULT = 1;
 
     private ViewPager2 viewPager2;
     private FragmentStateAdapter pagerAdapter;
@@ -26,16 +29,14 @@ public class ActivityMain extends FragmentActivity {
         viewPager2 = findViewById(R.id.viewPager2);
         pagerAdapter = new FragmentAdapter(this);
         viewPager2.setAdapter(pagerAdapter);
+
+        viewPager2.setCurrentItem(PAGE_ALGORITHM_RESULT);
     }
 
     /**
      * A simple pager adapter
      */
     private class FragmentAdapter extends FragmentStateAdapter {
-        public static final int PAGES = 2;
-        public static final int PAGE_MAIN = 0;
-        public static final int PAGE_ALGORITHM_RESULT = 1;
-
         public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
             super(fragmentActivity);
         }
@@ -43,11 +44,9 @@ public class ActivityMain extends FragmentActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            int index = position % PAGES;
-
             switch (position) {
-                case PAGE_MAIN: return new FragmentMain();
-                case PAGE_ALGORITHM_RESULT: return new FragmentAlgorithmResult();
+                case PAGE_MAIN: return FragmentMain.getInstance();
+                case PAGE_ALGORITHM_RESULT: return FragmentAlgorithmResult.getInstance();
                 default: return null;
             }
         }
@@ -57,5 +56,7 @@ public class ActivityMain extends FragmentActivity {
             return PAGES;
         }
     }
+
+    public ViewPager2 getViewPager2() { return viewPager2; }
 }
 

@@ -49,7 +49,7 @@ public class ObjectAlgorithm {
         return null;
     }
 
-    public void algorithmTest(String name, int day1, int day2, int day3, int day4) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmTest(String name, int day1, int day2, int day3, int day4) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -70,7 +70,7 @@ public class ObjectAlgorithm {
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
         dailyList.addAll(dailySet);
 
-        LinkedList<ArrayList<ModelTicker.Daily>> dataSet = new LinkedList<>();
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
 
         ModelTicker.Daily yesterday = null;
 
@@ -80,10 +80,32 @@ public class ObjectAlgorithm {
                 if (yesterday.getVolume() * 2 < today.getVolume()) {
                     buyPositions.add(today);
 
-                    ModelTicker.Daily daily1 = dailyList.get(i+day1);
-                    ModelTicker.Daily daily2 = dailyList.get(i+day2);
-                    ModelTicker.Daily daily3 = dailyList.get(i+day3);
-                    ModelTicker.Daily daily4 = dailyList.get(i+day4);
+                    ModelTicker.Daily daily1;
+                    ModelTicker.Daily daily2;
+                    ModelTicker.Daily daily3;
+                    ModelTicker.Daily daily4;
+
+                    try {
+                        daily1 = dailyList.get(i + day1);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily1 = null;
+                    }
+                    try {
+                        daily2 = dailyList.get(i + day2);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily2 = null;
+                    }
+                    try {
+                        daily3 = dailyList.get(i + day3);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily3 = null;
+                    }
+                    try {
+                        daily4 = dailyList.get(i + day4);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily4 = null;
+                    }
+
                     positions1.add(daily1);
                     positions2.add(daily2);
                     positions3.add(daily3);
@@ -94,20 +116,12 @@ public class ObjectAlgorithm {
             yesterday = today;
         }
 
-        dataSet.add(buyPositions);
-        dataSet.add(positions1);
-        dataSet.add(positions2);
-        dataSet.add(positions3);
-        dataSet.add(positions4);
+        resultList.add(buyPositions);
+        resultList.add(positions1);
+        resultList.add(positions2);
+        resultList.add(positions3);
+        resultList.add(positions4);
 
-        final int BUY = 0;
-        final int POS_1 = 1;
-        final int POS_2 = 2;
-        final int POS_3 = 3;
-        final int POS_4 = 4;
-
-
-
-
+        return resultList;
     }
 }
