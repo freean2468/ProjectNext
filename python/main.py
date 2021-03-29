@@ -7,13 +7,18 @@ import urllib
 import datetime
 
 # url 2020년 1월1일부터 2020년 12월 31일 까지 설정한 상태 (총 252일)
-targetUrl = "https://finance.yahoo.com/quote/RIOT/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true"
+# RIOT
+# targetUrl = "https://finance.yahoo.com/quote/RIOT/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true"
+
+# APPLE
+targetUrl = "https://finance.yahoo.com/quote/AAPL/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true"
+
 localhost = "http://127.0.0.1:8080/"
 
 SCROLL_PAUSE_SEC = 0.2
 
 # selenium에서 사용할 웹 드라이버 상대 경로 정보
-driverChrome = './chromedriver'
+driverChrome = './chromedriver_win'
 # selenium의 webdriver에 앞서 설지한 chromediriver를 연동
 driver = webdriver.Chrome(driverChrome)
 
@@ -47,6 +52,9 @@ requestUrl = localhost + route + urllib.parse.urlencode(params)
 r = requests.post(requestUrl)
 # print(r.text)
 
+beforeDate = soup.select_one(
+        '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child(2) > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span').get_text()
+
 i = 0
 while 1 :
     i = i + 1
@@ -55,7 +63,15 @@ while 1 :
 
     date = soup.select_one(
         '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span')
-    if date is not None:
+
+    if date is None:
+        break
+
+    print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
+
+    if date.get_text() == beforeDate:
+        continue
+    elif date is not None:
         ""
         # print(date.get_text())
     else:
@@ -71,7 +87,6 @@ while 1 :
     elif str(open)[:-6].find('span') <= 0:
         continue
     else:
-        # print(open)
         break
 
     high = soup.select_one(
@@ -123,6 +138,8 @@ while 1 :
     # print(requestUrl)
     r = requests.post(requestUrl)
     # print(r.text)
+
+    beforeDate = date.get_text()
 
 
 print('end of loading')
