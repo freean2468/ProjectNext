@@ -21,7 +21,9 @@ import java.util.TreeSet;
  */
 public class ObjectAlgorithm {
     public static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
-    public static final int ALGORITHM_BUY_OPEN_CASE = 1;
+    public static final int ALGORITHM_FOURTEEN_DAYS_CASE = 1;
+    public static final int ALGORITHM_SURGE_DAYS_CASE = 2;
+    public static final int ALGORITHM_BUY_OPEN_CASE = 3;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
