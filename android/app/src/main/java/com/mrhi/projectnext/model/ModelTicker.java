@@ -7,6 +7,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * 서버에서 제공받는 ticker의 일일 시고저종 + volume 데이터를 담을 모델.
+ *
+ * @author 송훈일(freean2468@gmail.com)
+ */
 public class ModelTicker {
     private String name;
     private SortedSet<Daily> dailyList;

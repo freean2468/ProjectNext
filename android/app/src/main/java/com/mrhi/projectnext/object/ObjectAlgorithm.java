@@ -1,7 +1,5 @@
 package com.mrhi.projectnext.object;
 
-import android.util.Log;
-
 import com.mrhi.projectnext.model.ModelTicker;
 
 import java.util.ArrayList;
@@ -13,6 +11,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * 각종 Algorithm이 구현될 클래스
+ * 싱글톤 구현
+ * 여기서 알고리즘에 필요한 데이터 셋을 추리고 ObjectAnyChart에서 이 데이터셋을 이용해
+ * 계산 및 도식화
+ *
+ * @author 송훈일(freean2468@gmail.com)
+ */
 public class ObjectAlgorithm {
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -38,7 +44,6 @@ public class ObjectAlgorithm {
 
         while(iterator.hasNext()) {
             ModelTicker modelTicker = iterator.next();
-            Log.d("debug", modelTicker.getName() + " vs " + name);
             if (modelTicker.getName().equals(name)) {
                 return modelTicker;
             }

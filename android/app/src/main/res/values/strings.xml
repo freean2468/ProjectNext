@@ -9,12 +9,10 @@
     <string name="url_dailies_all">dailies</string>
     <string name="url_daily">daily/1?</string>
 
-    <string-array name="algoRithm">
+    <string-array name="algorithmList">
         <item>전일대비 거래량이 100% 증가한 날 high에 매수 시점 이후 가격 평균</item>
         <item>알고리즘2</item>
         <item>알고리즘3</item>
-        <item>알고리즘4</item>
-        <item>알고리즘5</item>
     </string-array>
 
 </resources>

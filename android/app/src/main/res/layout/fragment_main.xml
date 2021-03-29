@@ -30,7 +30,7 @@
         android:orientation="horizontal">
 
         <Spinner
-            android:id = "@+id/spinnerDropdownMenu"
+            android:id = "@+id/spinnerAlgorithmList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">

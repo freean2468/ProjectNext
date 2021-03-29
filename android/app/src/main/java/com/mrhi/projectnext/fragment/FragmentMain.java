@@ -27,18 +27,21 @@ import com.mrhi.projectnext.object.ObjectVolley;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * 첫 화면, 메인 화면을 담당한 FragmentMain
+ * ticker 데이터 도식화 및 알고리즘 선택 및 실행을 위한 화면
+ *
+ * @author 송훈일(freean2468@gmail.com)
+ */
 public class FragmentMain extends Fragment {
     private static FragmentMain instance = new FragmentMain();
 
     private LinearLayout linearLayout;
-    private TextView textViewHost;
-    private Switch switchChangeIp;
-    private Spinner spinnerDropdownMenu;
-    private Spinner spinnerTickers;
-    private Button buttonExecute;
-
     private String strSelectedTicker;
+    private int nSelectedAlgorithm;
     private String strSelectedAlgorithm;
+
+    private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
 
     private FragmentMain(){
 
@@ -51,23 +54,21 @@ public class FragmentMain extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        /**
-         * 각종 View들과 Button, Spinner 초기화
-         */
-        String[] selectArray = getResources().getStringArray(R.array.algoRithm);
-        textViewHost = view.findViewById(R.id.textViewHost);
-        textViewHost.setText(ObjectVolley.getInstance(getContext()).getHostName());
-        spinnerDropdownMenu = view.findViewById(R.id.spinnerDropdownMenu);
-        spinnerTickers = view.findViewById(R.id.spinnerTickers);
-        buttonExecute = view.findViewById(R.id.buttonExecute);
-        switchChangeIp = view.findViewById(R.id.switchChangeIp);
-        spinnerDropdownMenu.setAdapter(new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, selectArray));
+        String[] strAlgorithmList = getResources().getStringArray(R.array.algorithmList);
+        TextView textViewHost = view.findViewById(R.id.textViewHost);
+        textViewHost.setText(ObjectVolley.getInstance(getContext()).getHostName());;
+        Switch switchChangeIp = view.findViewById(R.id.switchChangeIp);
+        Spinner spinnerAlgorithmList = view.findViewById(R.id.spinnerAlgorithmList);;
+        Spinner spinnerTickers = view.findViewById(R.id.spinnerTickers);;
+        Button buttonExecute = view.findViewById(R.id.buttonExecute);;
+
+        spinnerAlgorithmList.setAdapter(new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, strAlgorithmList));
         linearLayout = view.findViewById(R.id.linearLayout);
 
         ObjectVolley objectVolley = ObjectVolley.getInstance(getContext());
 
         /**
-         * sy
+         * 최초 실행 시 서버에 현재 ticker 목록을 요청해 초기화.
          */
         objectVolley.requestTickers(new ObjectVolley.RequestTickersListener() {
             @Override
@@ -83,6 +84,9 @@ public class FragmentMain extends Fragment {
             }
         });
 
+        /**
+         * 나중에 AWS에 서버 deploy 시 연결할 수 있도록 toggle 스위치
+         */
         switchChangeIp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -93,13 +97,13 @@ public class FragmentMain extends Fragment {
         });
 
         /**
-         *  알고리즘 선택을 위해 콤보박스와 버튼을 만들었다
-         *  실제 알고리즘이 나오면 각각의 콤보박스에 적용 예정이다..
+         *  알고리즘 선택
          */
-        spinnerDropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerAlgorithmList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int selectNum, long l) {
-                strSelectedAlgorithm = selectArray[selectNum];
+            public void onItemSelected(AdapterView<?> adapterView, View view, int selectedNum, long l) {
+                nSelectedAlgorithm = selectedNum;
+                strSelectedAlgorithm = strAlgorithmList[selectedNum];
             }
 
             @Override
@@ -108,6 +112,9 @@ public class FragmentMain extends Fragment {
             }
         });
 
+        /**
+         * 종목 선택
+         */
         spinnerTickers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -132,19 +139,26 @@ public class FragmentMain extends Fragment {
             }
         });
 
+        /**
+         * 알고리즘 선택
+         */
         buttonExecute.setOnClickListener(v->{
             ((ActivityMain)getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
 
-            ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
-            ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
-            ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
-            int day1 = 1;
-            int day2 = 7;
-            int day3 = 30;
-            int day4 = 180;
+            switch(nSelectedAlgorithm) {
+                case ALGORITHM_VOLUME_100PER_INCREASED_CASE:
+                    ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
+                    ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
+                    ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
+                    int day1 = 1;
+                    int day2 = 7;
+                    int day3 = 30;
+                    int day4 = 180;
 
-            LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
-            objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    break;
+            }
         });
 
         return view;
