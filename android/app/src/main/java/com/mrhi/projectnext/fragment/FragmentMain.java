@@ -34,7 +34,7 @@ import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_VOLUME_100PE
  * 첫 화면, 메인 화면을 담당한 FragmentMain
  * ticker 데이터 도식화 및 알고리즘 선택 및 실행을 위한 화면
  *
- * @author 송훈일(freean2468@gmail.com)
+ * @author 송훈일(freean2468 @ gmail.com)
  */
 public class FragmentMain extends Fragment {
     private static FragmentMain instance = new FragmentMain();
@@ -44,13 +44,19 @@ public class FragmentMain extends Fragment {
     private LinearLayout linearLayout;
     private String strSelectedTicker;
     private int nSelectedAlgorithm;
-    private String strSelectedAlgorithm;;
+    private String strSelectedAlgorithm;
 
-    private FragmentMain(){
+    private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
+    private static final int ALGORITHM_FOURTEEN_DAYS_CASE = 1;
+    private static final int ALGORITHM_SURGE_DAYS_CASE = 2;
+
+    private FragmentMain() {
 
     }
 
-    public static FragmentMain getInstance() { return instance; }
+    public static FragmentMain getInstance() {
+        return instance;
+    }
 
     @Nullable
     @Override
@@ -59,11 +65,15 @@ public class FragmentMain extends Fragment {
 
         String[] strAlgorithmList = getResources().getStringArray(R.array.algorithmList);
         TextView textViewHost = view.findViewById(R.id.textViewHost);
-        textViewHost.setText(ObjectVolley.getInstance(getContext()).getHostName());;
+        textViewHost.setText(ObjectVolley.getInstance(getContext()).getHostName());
+        ;
         Switch switchChangeIp = view.findViewById(R.id.switchChangeIp);
-        Spinner spinnerAlgorithmList = view.findViewById(R.id.spinnerAlgorithmList);;
-        Spinner spinnerTickers = view.findViewById(R.id.spinnerTickers);;
-        Button buttonExecute = view.findViewById(R.id.buttonExecute);;
+        Spinner spinnerAlgorithmList = view.findViewById(R.id.spinnerAlgorithmList);
+        ;
+        Spinner spinnerTickers = view.findViewById(R.id.spinnerTickers);
+        ;
+        Button buttonExecute = view.findViewById(R.id.buttonExecute);
+        ;
 
         spinnerAlgorithmList.setAdapter(new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, strAlgorithmList));
         linearLayout = view.findViewById(R.id.linearLayout);
@@ -121,7 +131,7 @@ public class FragmentMain extends Fragment {
         spinnerTickers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                strSelectedTicker = (String)parent.getItemAtPosition(position);
+                strSelectedTicker = (String) parent.getItemAtPosition(position);
 
                 objectVolley.requestDaily(strSelectedTicker, new ObjectVolley.RequestDailyListener() {
                     @Override
@@ -145,13 +155,14 @@ public class FragmentMain extends Fragment {
         /**
          * 알고리즘 선택
          */
-        buttonExecute.setOnClickListener(v->{
-            ((ActivityMain)getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
+        buttonExecute.setOnClickListener(v -> {
+            ((ActivityMain) getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
+
             ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
             ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
             ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
 
-            switch(nSelectedAlgorithm) {
+            switch (nSelectedAlgorithm) {
                 case ALGORITHM_VOLUME_100PER_INCREASED_CASE:
                     int day1 = 1;
                     int day2 = 7;
@@ -165,6 +176,17 @@ public class FragmentMain extends Fragment {
                     ArrayList<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmBuyOpenCase(strSelectedTicker);
                     objectAnyChart.drawAlgorithmBuyOpenCase(strSelectedAlgorithm, viewGroup, dailyList);
                     break;
+
+                case ALGORITHM_FOURTEEN_DAYS_CASE:
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList2 = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmFourteenDaysResult(strSelectedAlgorithm, viewGroup, resultList2);
+                    break;
+
+                case ALGORITHM_SURGE_DAYS_CASE:
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList3 = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmSurgeDaysResult(strSelectedAlgorithm, viewGroup, resultList3);
+                    break;
+
             }
         });
 

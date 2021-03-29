@@ -12,7 +12,8 @@
     <string-array name="algorithmList">
         <item>전일대비 거래량이 100% 증가한 날 high에 매수 시점 이후 가격 평균</item>
         <item>open에 매수하면 close와 비교할 때 수익을 낼 확률</item>
-        <item>알고리즘3</item>
+        <item>일정기간(14일) 중 가격상승이 8일 이상일 시 14일째의 매도 가격의 평균</item>
+        <item>떨어지는 주가가 다시 회복하기까지 걸리는 평균시간</item>
     </string-array>
 
 </resources>
