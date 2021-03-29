@@ -42,6 +42,7 @@ public class FragmentMain extends Fragment {
     private String strSelectedAlgorithm;
 
     private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
+    private static final int ALGORITHM_FOURTEEN_DAYS_CASE = 1;
 
     private FragmentMain(){
 
@@ -145,11 +146,12 @@ public class FragmentMain extends Fragment {
         buttonExecute.setOnClickListener(v->{
             ((ActivityMain)getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
 
+            ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
+            ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
+            ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
+
             switch(nSelectedAlgorithm) {
                 case ALGORITHM_VOLUME_100PER_INCREASED_CASE:
-                    ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
-                    ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
-                    ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
                     int day1 = 1;
                     int day2 = 7;
                     int day3 = 30;
@@ -157,6 +159,11 @@ public class FragmentMain extends Fragment {
 
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
                     objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    break;
+
+                case ALGORITHM_FOURTEEN_DAYS_CASE:
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList2 = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmFourteenDaysResult(strSelectedAlgorithm, viewGroup, resultList2);
                     break;
             }
         });

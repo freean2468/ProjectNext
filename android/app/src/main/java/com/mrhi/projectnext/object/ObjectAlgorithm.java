@@ -127,4 +127,64 @@ public class ObjectAlgorithm {
 
         return resultList;
     }
+
+
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmFourteenDays(String name){
+        /*
+            rapunzel algorithm
+            14일의 기간 중, 8일 동안 가격상승이 이루어졌을 때 첫날 매수하여 14일 째 되는 날 매도했을 때의 수익률
+            매수가와 매도가는 그 날의 고가
+         */
+        //name: spinner에서 선택한 종목명
+
+        //현재 스피너에서 선택한 종목명으로 알고리즘을 실행
+        ModelTicker ticker = getTicker(name);
+
+        //매수한 날 = today
+        ArrayList<ModelTicker.Daily> buyDate = new ArrayList(){};
+        //매도한 날 = today + 14
+        ArrayList<ModelTicker.Daily> sellDate = new ArrayList(){};
+        
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
+
+        ModelTicker.Daily yesterday = null;
+
+        for (int i = 0; i < dailyList.size(); ++i){
+            ModelTicker.Daily today = dailyList.get(i);
+            if(yesterday != null){
+                int count = 0;
+
+                //14일 거르는 for문
+                for(int j=0; j < 14; j++){
+                    //전일보다 종가의 가격상승이 이루어지는 날이 8일 이상이면
+                    if(yesterday.getClose() < today.getClose()){
+                        count++;
+
+                        if(count >= 8){
+                            //알고리즘에 걸리는 날이 마지막 날이면 마지막날 + 14일은 없으니 오류
+                            try {
+                                ModelTicker.Daily fourteenDaysLater = dailyList.get(i + 14);
+                                sellDate.add(fourteenDaysLater);
+                                buyDate.add(today);
+                            } catch (IndexOutOfBoundsException ioobe) {
+                                break;
+                            }
+                            break;
+                        }
+                    }//end of if
+                }//end of for FourteenDays
+            }//end of if not null yesterday
+            yesterday = today;
+        }//end of for OneYear
+
+        resultList.add(buyDate);
+        resultList.add(sellDate);
+
+        return resultList;
+    }//end of algorithmFourteenDays
+
 }
