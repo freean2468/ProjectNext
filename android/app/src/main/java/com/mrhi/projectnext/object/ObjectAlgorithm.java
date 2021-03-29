@@ -2,8 +2,6 @@ package com.mrhi.projectnext.object;
 
 import android.util.Log;
 
-import com.anychart.AnyChart;
-import com.anychart.charts.Stock;
 import com.mrhi.projectnext.model.ModelTicker;
 
 import java.util.ArrayList;

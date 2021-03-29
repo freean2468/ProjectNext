@@ -3,6 +3,7 @@ package com.mrhi.projectnext.object;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.core.view.ViewCompat;
 
@@ -190,7 +191,7 @@ public class ObjectAnyChart {
         }
     }
 
-    public void drawAlgorithmTestResult(ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
+    public void drawAlgorithmTestResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         viewGroup.removeAllViewsInLayout();
         String name = String.valueOf(day1) + " | " + String.valueOf(day2) + " | " + String.valueOf(day3) + " | " + String.valueOf(day4);
 
@@ -199,15 +200,26 @@ public class ObjectAnyChart {
 
             for (int i = 0; i < size; ++i) {
                 AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
-//                anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
-//                        LinearLayout.LayoutParams.MATCH_PARENT,
-//                        LinearLayout.LayoutParams.MATCH_PARENT));
                 anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
-                        1000,
-                        1000));
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1));
+//                anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+//                        1000,
+//                        1000));
                 anyChartView.setPadding(10, 0, 0, 0);
 
                 viewGroup.addView(anyChartView);
+
+                LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1
+                ));
+                linearLayout.setPadding(10, 10, 10, 10);
+
+                viewGroup.addView(linearLayout);
 
                 /**
                  * draw graph
@@ -225,7 +237,7 @@ public class ObjectAnyChart {
 
                 cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
 
-                cartesian.title("전일대비 거래량이 100% 증가한 날 high에 매수 후 가격 변화");
+                cartesian.title(strSelectedAlgorithm);
 
                 cartesian.yAxis(0).title("price");
                 cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
@@ -234,18 +246,62 @@ public class ObjectAnyChart {
 
                 Set set = Set.instantiate();
 
-                for (int j = 0; j < resultList.size(); ++j) {
-                    ModelTicker.Daily daily = resultList.get(j).get(i);
-                    if (daily != null) {
-                        try {
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                            Date date = formatter.parse(formatter.format(daily.getDate()));
-                            seriesData.add(new AlgorithmDataEntry(date.toString(), daily.getHigh(), daily.getVolume()));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+//                for (int j = 0; j < resultList.size(); ++j) {
+//                    ModelTicker.Daily daily = resultList.get(j).get(i);
+//                    if (daily != null) {
+//                        try {
+//                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//                            Date date = formatter.parse(formatter.format(daily.getDate()));
+//                            seriesData.add(new AlgorithmDataEntry(date.toString(), daily.getHigh(), daily.getVolume()));
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+
+                final int BUY = 0;
+                final int DAY_1 = 1;
+                final int DAY_2 = 2;
+                final int DAY_3 = 3;
+                final int DAY_4 = 4;
+
+                double avgBuy = 0.0;
+                double avgDay1 = 0.0;
+                double avgDay2 = 0.0;
+                double avgDay3 = 0.0;
+                double avgDay4 = 0.0;
+
+                int count = 0;
+
+                for (int k = 0; k < size; ++k) {
+                    ModelTicker.Daily buy = resultList.get(BUY).get(k);
+                    ModelTicker.Daily day1Daily = resultList.get(DAY_1).get(k);
+                    ModelTicker.Daily day2Daily = resultList.get(DAY_2).get(k);
+                    ModelTicker.Daily day3Daily = resultList.get(DAY_3).get(k);
+                    ModelTicker.Daily day4Daily = resultList.get(DAY_4).get(k);
+
+                    if (day4Daily != null) {
+                        avgDay4 += day4Daily.getHigh();
+                        avgDay3 += day3Daily.getHigh();
+                        avgDay2 += day2Daily.getHigh();
+                        avgDay1 += day1Daily.getHigh();
+                        avgBuy += buy.getHigh();
+                    } else {
+                        count++;
                     }
                 }
+
+                avgBuy /= size - count;
+                avgDay1 /= size - count;
+                avgDay2 /= size - count;
+                avgDay3 /= size - count;
+                avgDay4 /= size - count;
+
+                seriesData.add(new AlgorithmDataEntry("buy", avgBuy));
+                seriesData.add(new AlgorithmDataEntry(day1 + "d", avgDay1));
+                seriesData.add(new AlgorithmDataEntry(day2 + "d", avgDay2));
+                seriesData.add(new AlgorithmDataEntry(day3 + "d", avgDay3));
+                seriesData.add(new AlgorithmDataEntry(day4 + "d", avgDay4));
 
                 set.data(seriesData);
                 Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
@@ -263,10 +319,16 @@ public class ObjectAnyChart {
                         .offsetY(5d);
 
                 cartesian.legend().enabled(true);
-                cartesian.legend().fontSize(7d);
+                cartesian.legend().fontSize(14d);
                 cartesian.legend().padding(0d, 0d, 10d, 0d);
 
                 anyChartView.setChart(cartesian);
+
+                TextView textViewOccurrence = new TextView(viewGroup.getContext());
+                textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size);
+                linearLayout.addView(textViewOccurrence);
+
+                break;
             }
         }
     }
@@ -281,10 +343,8 @@ public class ObjectAnyChart {
     }
 
     private class AlgorithmDataEntry extends ValueDataEntry {
-        AlgorithmDataEntry(String x, Double value, Long volume) {
+        AlgorithmDataEntry(String x, Double value) {
             super(x, value);
-            setValue("volume", volume);
         }
-
     }
 }

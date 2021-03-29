@@ -35,9 +35,10 @@ public class FragmentMain extends Fragment {
     private Switch switchChangeIp;
     private Spinner spinnerDropdownMenu;
     private Spinner spinnerTickers;
-    private Button buttonSelect;
-    private TextView selectAlgorithmView;
-    private String selectedTicker;
+    private Button buttonExecute;
+
+    private String strSelectedTicker;
+    private String strSelectedAlgorithm;
 
     private FragmentMain(){
 
@@ -58,10 +59,9 @@ public class FragmentMain extends Fragment {
         textViewHost.setText(ObjectVolley.getInstance(getContext()).getHostName());
         spinnerDropdownMenu = view.findViewById(R.id.spinnerDropdownMenu);
         spinnerTickers = view.findViewById(R.id.spinnerTickers);
-        buttonSelect = view.findViewById(R.id.buttonSelect);
+        buttonExecute = view.findViewById(R.id.buttonExecute);
         switchChangeIp = view.findViewById(R.id.switchChangeIp);
-        selectAlgorithmView = view.findViewById(R.id.selectAlgorithmView);
-        spinnerDropdownMenu.setAdapter(new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_dropdown_item, selectArray));
+        spinnerDropdownMenu.setAdapter(new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, selectArray));
         linearLayout = view.findViewById(R.id.linearLayout);
 
         ObjectVolley objectVolley = ObjectVolley.getInstance(getContext());
@@ -99,7 +99,7 @@ public class FragmentMain extends Fragment {
         spinnerDropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int selectNum, long l) {
-                buttonSelect.setText(selectArray[selectNum]);
+                strSelectedAlgorithm = selectArray[selectNum];
             }
 
             @Override
@@ -111,12 +111,12 @@ public class FragmentMain extends Fragment {
         spinnerTickers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedTicker = (String)parent.getItemAtPosition(position);
+                strSelectedTicker = (String)parent.getItemAtPosition(position);
 
-                objectVolley.requestDaily(selectedTicker, new ObjectVolley.RequestDailyListener() {
+                objectVolley.requestDaily(strSelectedTicker, new ObjectVolley.RequestDailyListener() {
                     @Override
                     public void jobToDo() {
-                        ObjectAnyChart.getInstance().drawOHLCChart(linearLayout, selectedTicker);
+                        ObjectAnyChart.getInstance().drawOHLCChart(linearLayout, strSelectedTicker);
                     }
                 }, new ObjectVolley.StandardErrorListener() {
                     @Override
@@ -132,9 +132,7 @@ public class FragmentMain extends Fragment {
             }
         });
 
-        buttonSelect.setOnClickListener(v->{
-            selectAlgorithmView.setText(buttonSelect.getText());
-
+        buttonExecute.setOnClickListener(v->{
             ((ActivityMain)getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
 
             ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
@@ -145,8 +143,8 @@ public class FragmentMain extends Fragment {
             int day3 = 30;
             int day4 = 180;
 
-            LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(selectedTicker, day1, day2, day3, day4);
-            objectAnyChart.drawAlgorithmTestResult(viewGroup, resultList, day1, day2, day3, day4);
+            LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
+            objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
         });
 
         return view;

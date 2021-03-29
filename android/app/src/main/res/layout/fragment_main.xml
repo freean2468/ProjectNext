@@ -31,24 +31,18 @@
 
         <Spinner
             android:id = "@+id/spinnerDropdownMenu"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left">
+            android:layout_weight="1">
         </Spinner>
 
         <Button
-            android:id = "@+id/buttonSelect"
-            android:layout_width="wrap_content"
+            android:id = "@+id/buttonExecute"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text = "선택">
+            android:layout_weight="5"
+            android:text = "실행">
         </Button>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/selectAlgorithmView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="선택된 알고리즘">
-    </TextView>
 
 </LinearLayout>
