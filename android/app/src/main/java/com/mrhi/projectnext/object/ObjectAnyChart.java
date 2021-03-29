@@ -215,7 +215,7 @@ public class ObjectAnyChart {
      * @param day3
      * @param day4
      */
-    public void drawAlgorithmTestResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
+    public void drawAlgorithmVolumeDoubleTimedCase(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
@@ -400,6 +400,164 @@ public class ObjectAnyChart {
                     Helper.round((avgDay4 - avgBuy)/avgBuy*100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay4);
         }
+    }
+
+    public void drawAlgorithmBuyOpenCase(String strSelectedAlgorithm, ViewGroup viewGroup, ArrayList<ModelTicker.Daily> resultList) {
+        /**
+         * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
+         */
+        viewGroup.removeAllViewsInLayout();
+        String name = "Open | Close";
+
+        /**
+         * 알고리즘 매칭되는 부분이 없을 수도 있다.
+         */
+        int size = resultList.size();
+
+        /**
+         * 새로운 AnyChartView를 xml이 아니라 코드상에서 직접 생성하고
+         */
+        AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+        /**
+         * Layout을 설정
+         */
+        anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+        anyChartView.setPadding(10, 0, 0, 0);
+
+        /**
+         * FragmentAlgorithmResult의 LinearLayout에 추가해준다.
+         */
+        viewGroup.addView(anyChartView);
+
+        /**
+         * 계산해낸 평균 결과 도출은 그래프를 통해 화면 절반에 도식하고
+         * 나머지 절반에 도출해낸 수치들을 표시하기 위해
+         * LinearLayout을 또 만들어 추가해준다.
+         */
+        LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        ));
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(10, 10, 10, 10);
+
+        viewGroup.addView(linearLayout);
+
+        /**
+         * 실제 AnyChart Library를 이용해 꺽은선 그래프를 그리는 부분
+         * 자세한 사항들은
+         * https://github.com/AnyChart/AnyChart-Android 코드 예제들을 보고 적용할 것.
+         */
+        Cartesian cartesian = AnyChart.line();
+
+        cartesian.animation(false);
+
+        cartesian.padding(10d, 20d, 5d, 20d);
+
+        cartesian.crosshair().enabled(true);
+        cartesian.crosshair()
+                .yLabel(true)
+                .yStroke((Stroke) null, null, null, (String) null, (String) null);
+
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+
+        cartesian.title(strSelectedAlgorithm);
+
+        cartesian.yAxis(0).title("price");
+        cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+        List<DataEntry> seriesData = new ArrayList<>();
+
+        /**
+         * AnyChart graph를 그리는 데 필요한 dataset을 담을
+         * Set을 생성하는데 그래프와 굉장히 강력하게 bind 되어 있어
+         * 아예 위에서 봤듯이 뷰 전체를 비우는 방식으로 초기화를 하고 있다.
+         */
+        Set set = Set.instantiate();
+
+        double avgOpen = 0.0;
+        double avgClose = 0.0;
+        int greaterOpenCount = 0;
+        int greaterCloseCount = 0;
+
+        /**
+         * 조건에 해당하는 결과들의 평균을 구하고
+         */
+        for (int k = 0; k < size; ++k) {
+            ModelTicker.Daily daily = resultList.get(k);
+
+            avgOpen += daily.getOpen();
+            avgClose += daily.getClose();
+
+            if (daily.getOpen() >= daily.getClose()) {
+                greaterOpenCount++;
+            } else {
+                greaterCloseCount++;
+            }
+        }
+
+        avgOpen /= size;
+        avgClose /= size;
+
+        /**
+         * 셋에 데이터를 집어 넣어 그래프를 그릴 준비
+         */
+        seriesData.add(new AlgorithmDataEntry("open", avgOpen));
+        seriesData.add(new AlgorithmDataEntry("close", avgClose));
+
+        set.data(seriesData);
+
+        /**
+         * x : 가로축 값
+         * value : 세로축 값
+         */
+        Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+
+        Line series1 = cartesian.line(series1Mapping);
+        series1.name(name);
+        series1.hovered().markers().enabled(true);
+        series1.hovered().markers()
+                .type(MarkerType.CIRCLE)
+                .size(4d);
+        series1.tooltip()
+                .position("right")
+                .anchor(Anchor.LEFT_CENTER)
+                .offsetX(5d)
+                .offsetY(5d);
+
+        cartesian.legend().enabled(true);
+        cartesian.legend().fontSize(14d);
+        cartesian.legend().padding(0d, 0d, 10d, 0d);
+
+        /**
+         * 만들어두었던 anychartview에 그래프를 셋팅
+         */
+        anyChartView.setChart(cartesian);
+
+        /**
+         * 알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화 하는 부분.
+         */
+        TextView textViewOccurrence = new TextView(viewGroup.getContext());
+        textViewOccurrence.setText(size + "일 중");
+        linearLayout.addView(textViewOccurrence);
+
+        TextView textView2 = new TextView(viewGroup.getContext());
+        textView2.setText("open이 더 높은 일 수 : " + greaterOpenCount + ", close가 더 높은 일 수 : " +
+                greaterCloseCount);
+        linearLayout.addView(textView2);
+
+        TextView textView3 = new TextView(viewGroup.getContext());
+        textView3.setText("수익률 : " + Helper.round((avgClose - avgOpen) / avgOpen, 2) + "%");
+        linearLayout.addView(textView3);
+
+        TextView textView4 = new TextView(viewGroup.getContext());
+        textView4.setText("승률 : " + Helper.round((double)greaterOpenCount/size * 100, 2) + "%");
+        linearLayout.addView(textView4);
     }
 
     /**

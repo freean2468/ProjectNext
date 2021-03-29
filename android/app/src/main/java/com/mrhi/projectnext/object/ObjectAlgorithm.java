@@ -20,6 +20,9 @@ import java.util.TreeSet;
  * @author 송훈일(freean2468@gmail.com)
  */
 public class ObjectAlgorithm {
+    public static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
+    public static final int ALGORITHM_BUY_OPEN_CASE = 1;
+
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
     private ObjectAlgorithm() {
@@ -52,17 +55,24 @@ public class ObjectAlgorithm {
         return null;
     }
 
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmTest(String name, int day1, int day2, int day3, int day4) {
+    /**
+     * 전날 대비 volume이 100%이상 상승한 날 high에 매수 시
+     * day1일 후 수익률, day2일 후 수익률, day3일 후 수익률, day4일 후 수익률
+     *
+     * @auth 송훈일
+     * @param name
+     * @param day1
+     * @param day2
+     * @param day3
+     * @param day4
+     * @return
+     */
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolume100PerIncreatedCase(String name, int day1, int day2, int day3, int day4) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
         ModelTicker ticker = getTicker(name);
 
-        /**
-         * 시나리오 1
-         * 전날 대비 volume이 100%이상 상승한 날 high에 매수 시
-         * 다음 날 수익률, 7일 후 수익률, 30일 후 수익률, 180일 후 수익률
-         */
         ArrayList<ModelTicker.Daily> buyPositions = new ArrayList(){};
         ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
         ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
@@ -126,5 +136,18 @@ public class ObjectAlgorithm {
         resultList.add(positions4);
 
         return resultList;
+    }
+
+    /**
+     * open에 매수하면 close와 비교할 때 수익을 낼 확률
+     * @authour 송훈일
+     */
+    public ArrayList<ModelTicker.Daily> algorithmBuyOpenCase(String name) {
+        ModelTicker ticker = getTicker(name);
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        ArrayList<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        return dailyList;
     }
 }

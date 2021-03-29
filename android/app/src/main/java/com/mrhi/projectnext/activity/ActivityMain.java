@@ -8,6 +8,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.mrhi.projectnext.R;
 import com.mrhi.projectnext.fragment.FragmentAlgorithmResult;
 import com.mrhi.projectnext.fragment.FragmentMain;
@@ -40,11 +42,27 @@ public class ActivityMain extends FragmentActivity {
         pagerAdapter = new FragmentAdapter(this);
         viewPager2.setAdapter(pagerAdapter);
 
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
         /**
          * 최초 화면 생성 시 PAGE_ALGORITHM_RESULT 화면으로 이동해
          * onCreate() 함수를 호출 시켜 초기화 시킨다.
          */
         viewPager2.setCurrentItem(PAGE_ALGORITHM_RESULT);
+        viewPager2.setUserInputEnabled(false);
+        new TabLayoutMediator(tabLayout, viewPager2,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        switch (position) {
+                            case 0:
+                                tab.setText("Main");
+                                break;
+                            case 1:
+                                tab.setText("Algorithm\nResult");
+                                break;
+                        }
+                    }
+                }).attach();
     }
 
     private class FragmentAdapter extends FragmentStateAdapter {

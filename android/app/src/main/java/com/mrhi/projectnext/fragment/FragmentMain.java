@@ -27,6 +27,9 @@ import com.mrhi.projectnext.object.ObjectVolley;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_OPEN_CASE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_VOLUME_100PER_INCREASED_CASE;
+
 /**
  * 첫 화면, 메인 화면을 담당한 FragmentMain
  * ticker 데이터 도식화 및 알고리즘 선택 및 실행을 위한 화면
@@ -36,12 +39,12 @@ import java.util.LinkedList;
 public class FragmentMain extends Fragment {
     private static FragmentMain instance = new FragmentMain();
 
+    public static final String ARG_OBJECT = "object";
+
     private LinearLayout linearLayout;
     private String strSelectedTicker;
     private int nSelectedAlgorithm;
-    private String strSelectedAlgorithm;
-
-    private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
+    private String strSelectedAlgorithm;;
 
     private FragmentMain(){
 
@@ -144,19 +147,23 @@ public class FragmentMain extends Fragment {
          */
         buttonExecute.setOnClickListener(v->{
             ((ActivityMain)getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
+            ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
+            ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
+            ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
 
             switch(nSelectedAlgorithm) {
                 case ALGORITHM_VOLUME_100PER_INCREASED_CASE:
-                    ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
-                    ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
-                    ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
                     int day1 = 1;
                     int day2 = 7;
                     int day3 = 30;
                     int day4 = 180;
 
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
-                    objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmVolume100PerIncreatedCase(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.drawAlgorithmVolumeDoubleTimedCase(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    break;
+                case ALGORITHM_BUY_OPEN_CASE:
+                    ArrayList<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmBuyOpenCase(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmBuyOpenCase(strSelectedAlgorithm, viewGroup, dailyList);
                     break;
             }
         });
@@ -165,5 +172,4 @@ public class FragmentMain extends Fragment {
     }
 
     public LinearLayout getViewGroup() { return linearLayout; }
-
 }
