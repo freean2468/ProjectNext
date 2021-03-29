@@ -191,6 +191,19 @@ public class ObjectAnyChart {
         }
     }
 
+    /**
+     * 전일 대비 거래량이 100% 상승했을 때 high에서 매수한 시점에서
+     * day1, day2, day3, day4 이후의 가격을 평균을 도출하는 알고리즘.
+     *
+     * @author 송훈일 (freean2468@gmail.com)
+     * @param strSelectedAlgorithm
+     * @param viewGroup
+     * @param resultList
+     * @param day1
+     * @param day2
+     * @param day3
+     * @param day4
+     */
     public void drawAlgorithmTestResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         viewGroup.removeAllViewsInLayout();
         String name = String.valueOf(day1) + " | " + String.valueOf(day2) + " | " + String.valueOf(day3) + " | " + String.valueOf(day4);
