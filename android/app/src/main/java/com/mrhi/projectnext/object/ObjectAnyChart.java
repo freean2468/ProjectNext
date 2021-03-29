@@ -25,12 +25,10 @@ import com.anychart.enums.MovingAverageType;
 import com.anychart.enums.StockSeriesType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
+import com.mrhi.projectnext.help.Helper;
 import com.mrhi.projectnext.model.ModelTicker;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -259,6 +257,7 @@ public class ObjectAnyChart {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1
             ));
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
             linearLayout.setPadding(10, 10, 10, 10);
 
             viewGroup.addView(linearLayout);
@@ -380,6 +379,26 @@ public class ObjectAnyChart {
             TextView textViewOccurrence = new TextView(viewGroup.getContext());
             textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size);
             linearLayout.addView(textViewOccurrence);
+
+            TextView textViewEarningRateDay1 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay1.setText("매수 시점 기준 " + day1 +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay1 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay1);
+
+            TextView textViewEarningRateDay2 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay2.setText("매수 시점 기준 " + day2 +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay2 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay2);
+
+            TextView textViewEarningRateDay3 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay3.setText("매수 시점 기준 " + day3 +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay3 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay3);
+
+            TextView textViewEarningRateDay4 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay4.setText("매수 시점 기준 " + day4 +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay4 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay4);
         }
     }
 
