@@ -1,5 +1,6 @@
 package com.mrhi.projectnext.object;
 
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 알고리즘의 결과물들을 구현할 클래스
@@ -389,7 +391,7 @@ public class ObjectAnyChart {
     public void drawAlgorithmFourteenDaysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
         //기존에 있던 뷰 정리
         viewGroup.removeAllViewsInLayout();
-        String name = "firstDay, high" + " | " + "lastDay, low";
+        String name = "firstDay, high" + " | " + "lastDay, high";
 
         //알고리즘에 매칭되는 부분이 없을 수 있음
         if (resultList.get(0).size() > 0) {
@@ -507,6 +509,143 @@ public class ObjectAnyChart {
         }//end of if exsist resultList
 
     }//end of draw14days
+
+    /*
+    *허선영
+     */
+    public void drawAlgorithmSurgeDaysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList3) {
+        //기존에 있던 뷰 정리
+        viewGroup.removeAllViewsInLayout();
+        String name = "slidingDate, close" + " | " + "recoveredDate, close";
+
+        //알고리즘에 매칭되는 부분이 없을 수 있음
+        if (resultList3.get(0).size() > 0) {
+            int size = resultList3.get(0).size();
+
+            //새로운 anyChart생성 부분
+            AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+            //layout 설정
+            anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1));
+            anyChartView.setPadding(10, 0, 0, 0);
+
+
+            //FragmentAlgorithmResult의 LinearLayout에 추가해준다.
+            viewGroup.addView(anyChartView);
+
+            //계산해낸 평균 결과 도출은 그래프, 수치표현을 위해 추가로 LinearLayout 생성
+            LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1
+            ));
+            linearLayout.setPadding(10, 10, 10, 10);
+
+            viewGroup.addView(linearLayout);
+
+            //////////////////////////////////////////////////////////////////////////////////////
+
+            //실제 AnyChart Library를 이용해 꺽은선 그래프를 그리는 부분
+            Cartesian cartesian = AnyChart.line();
+
+            cartesian.animation(false);
+
+            cartesian.padding(10d, 20d, 5d, 20d);
+
+            cartesian.crosshair().enabled(true);
+            cartesian.crosshair()
+                    .yLabel(true)
+                    .yStroke((Stroke) null, null, null, (String) null, (String) null);
+
+            cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+
+            cartesian.title(strSelectedAlgorithm);
+
+            cartesian.yAxis(0).title("price");
+            cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+            List<DataEntry> seriesData = new ArrayList<>();
+
+            /////////////////////////////////////////////////////////////////////////////////////
+
+            /**
+             * AnyChart graph를 그리는 데 필요한 dataset을 담을
+             * Set을 생성하는데 그래프와 굉장히 강력하게 bind 되어 있어
+             * 아예 위에서 봤듯이 뷰 전체를 비우는 방식으로 초기화를 하고 있다.
+             */
+            Set set = Set.instantiate();
+
+            final int SLIDE = 0;
+            final int RECOVER = 1;
+
+            double avgSlide = 0.0;
+            double avgRecover = 0.0;
+            long avgDate = 0;
+
+            //조건에 해당하는 평균들
+            for (int k = 0; k < size; ++k) {
+                ModelTicker.Daily slide = resultList3.get(SLIDE).get(k);
+                ModelTicker.Daily recover = resultList3.get(RECOVER).get(k);
+
+                if (recover != null) {
+                    avgSlide += slide.getClose();
+                    avgRecover += recover.getClose();
+
+                    /////////////////////////////////////////////////////////////////////////
+                    // 날짜를 시간으로 변환
+
+                    long diffInMillies = Math.abs(recover.getDate().getTime() - slide.getDate().getTime());
+                    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+//                    Log.d("debug", "걸린 일 수 : " + diff);
+
+                    avgDate += diff;
+                }
+            }//end of for
+
+            avgSlide /= size;
+            avgRecover /= size;
+            avgDate /= size;
+
+            //set에 데이터를 집어 넣어 그래프를 그릴 준비
+            seriesData.add(new AlgorithmDataEntry("slide", avgSlide));
+            seriesData.add(new AlgorithmDataEntry("recover", avgRecover));
+
+            set.data(seriesData);
+
+            //x: 가로축, value: 세로축
+            Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+
+            Line series1 = cartesian.line(series1Mapping);
+            series1.name(name);
+            series1.hovered().markers().enabled(true);
+            series1.hovered().markers()
+                    .type(MarkerType.CIRCLE)
+                    .size(4d);
+            series1.tooltip()
+                    .position("right")
+                    .anchor(Anchor.LEFT_CENTER)
+                    .offsetX(5d)
+                    .offsetY(5d);
+
+            cartesian.legend().enabled(true);
+            cartesian.legend().fontSize(14d);
+            cartesian.legend().padding(0d, 0d, 10d, 0d);
+
+            //만들어두었던 anychartview에 그래프를 셋팅
+            anyChartView.setChart(cartesian);
+
+            //알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화 하는 부분.
+            TextView textViewOccurrence = new TextView(viewGroup.getContext());
+            textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size + "   평균 소요 시간: " + avgDate+"일");
+            linearLayout.addView(textViewOccurrence);
+
+        }//end of if exsist resultList
+
+    }//end of algorithmSurgeDate
 
     /**
      * 시고저종 그래프를 그리는데 필요한 데이터 셋
