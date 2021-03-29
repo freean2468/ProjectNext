@@ -33,6 +33,12 @@ public class ModelTicker {
             this.volume = volume;
         }
 
+        public Daily(Double high, Double low)
+        {
+            this.high = high;
+            this.low = low;
+        }
+
         public Date getDate() { return date; }
         public double getOpen() { return open; }
         public double getHigh() { return high; }

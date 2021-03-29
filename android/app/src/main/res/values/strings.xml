@@ -11,7 +11,7 @@
 
     <string-array name="algorithmList">
         <item>전일대비 거래량이 100% 증가한 날 high에 매수 시점 이후 가격 평균</item>
-        <item>알고리즘2</item>
+        <item>전일대비 거래량이 100% 줄어든날 Low에 매수 시점 우후 가격 평균</item>
         <item>알고리즘3</item>
     </string-array>
 
