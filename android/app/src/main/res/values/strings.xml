@@ -15,6 +15,7 @@
         <item>떨어지는 주가가 다시 회복하기까지 걸리는 평균시간</item>
         <item>open에 매수하면 close와 비교할 때 수익을 낼 확률</item>
         <item>14일 중 가격과 거래량 상승이 8일 이상일 시 14일째의 매도 가격의 평균</item>
+        <item>저가로 매수했을 시 매수 매수 시점 이후 가격 평균</item>
     </string-array>
 
 </resources>

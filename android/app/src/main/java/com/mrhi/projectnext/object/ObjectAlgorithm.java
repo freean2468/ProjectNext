@@ -25,6 +25,7 @@ public class ObjectAlgorithm {
     public static final int ALGORITHM_SURGE_DAYS_CASE = 2;
     public static final int ALGORITHM_BUY_OPEN_CASE = 3;
     public static final int ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE = 4;
+    public static final int ALGORITHM_BUY_LOW_CASE = 5;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -327,5 +328,88 @@ public class ObjectAlgorithm {
 
     }//end of algorithmFourteenDaysVolume
 
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmBuyLow(String name, int day, int nextDay, int oneWeek, int oneMonth, int sixMonth){
+        /**
+         * rapunzel algorithm
+         * 저가에 매수 시 그날 종가, 다음날, 일주일 후, 한달 후, 6개월 후의 종가에 대한 수익률
+         */
+
+        ModelTicker ticker = getTicker(name);
+
+        //매수한 날 = today
+        ArrayList<ModelTicker.Daily> buyDate = new ArrayList() {
+        };
+        //매도한 날 = today + X
+        ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions3 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions4 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions5 = new ArrayList<>();
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
+
+        ModelTicker.Daily yesterday = null;
+
+        for (int i = 0; i < dailyList.size(); ++i) {
+            ModelTicker.Daily today = dailyList.get(i);
+            if (yesterday != null) {
+                if (yesterday.getVolume() * 2 < today.getVolume()) {
+                    buyDate.add(today);
+
+                    ModelTicker.Daily daily1;
+                    ModelTicker.Daily daily2;
+                    ModelTicker.Daily daily3;
+                    ModelTicker.Daily daily4;
+                    ModelTicker.Daily daily5;
+
+                    try {
+                        daily1 = dailyList.get(i + day);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily1 = null;
+                    }
+                    try {
+                        daily2 = dailyList.get(i + nextDay);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily2 = null;
+                    }
+                    try {
+                        daily3 = dailyList.get(i + oneWeek);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily3 = null;
+                    }
+                    try {
+                        daily4 = dailyList.get(i + oneMonth);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily4 = null;
+                    }
+                    try {
+                        daily5 = dailyList.get(i + sixMonth);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily5 = null;
+                    }
+
+                    positions1.add(daily1);
+                    positions2.add(daily2);
+                    positions3.add(daily3);
+                    positions4.add(daily4);
+                    positions5.add(daily5);
+                }
+            }
+            yesterday = today;
+        }
+
+        resultList.add(buyDate);
+        resultList.add(positions1);
+        resultList.add(positions2);
+        resultList.add(positions3);
+        resultList.add(positions4);
+        resultList.add(positions5);
+
+        return resultList;
+    }//end of algorithmBuyLow
 
 }

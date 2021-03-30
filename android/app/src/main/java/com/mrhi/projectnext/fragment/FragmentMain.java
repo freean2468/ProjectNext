@@ -27,6 +27,7 @@ import com.mrhi.projectnext.object.ObjectVolley;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_LOW_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_OPEN_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE;
@@ -189,6 +190,17 @@ public class FragmentMain extends Fragment {
                 case ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE: {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmFourteenDaysVolume(strSelectedTicker);
                     objectAnyChart.drawAlgorithmFourteenDaysVolumeResult(strSelectedAlgorithm, viewGroup, resultList);
+                }
+                    break;
+                case ALGORITHM_BUY_LOW_CASE:
+                    int day = 0;
+                    int nextDay = 1;
+                    int oneWeek = 7;
+                    int oneMonth = 30;
+                    int sixMonth = 180;
+                {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmBuyLow(strSelectedTicker, day, nextDay, oneWeek, oneMonth, sixMonth);
+                    objectAnyChart.drawAlgorithmBuyLowResult(strSelectedAlgorithm, viewGroup, resultList, day, nextDay, oneWeek, oneMonth, sixMonth);
                 }
                     break;
             }
