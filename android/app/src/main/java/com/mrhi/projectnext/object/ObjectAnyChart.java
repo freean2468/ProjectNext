@@ -825,6 +825,131 @@ public class ObjectAnyChart {
     }//end of algorithmSurgeDate
 
     /**
+     * @author 허선영
+     */
+    public void drawAlgorithmFourteenDaysVolumeResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
+        //기존에 있던 뷰 정리
+        viewGroup.removeAllViewsInLayout();
+        String name = "firstDay, high" + " | " + "lastDay, high";
+
+        //알고리즘에 매칭되는 부분이 없을 수 있음
+        if (resultList.get(0).size() > 0) {
+            int size = resultList.get(0).size();
+
+            //새로운 anyChart생성 부분
+            AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+            //layout 설정
+            anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1));
+            anyChartView.setPadding(10, 0, 0, 0);
+
+
+            //FragmentAlgorithmResult의 LinearLayout에 추가해준다.
+            viewGroup.addView(anyChartView);
+
+            //계산해낸 평균 결과 도출은 그래프, 수치표현을 위해 추가로 LinearLayout 생성
+            LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1
+            ));
+            linearLayout.setPadding(10, 10, 10, 10);
+
+            viewGroup.addView(linearLayout);
+
+            //////////////////////////////////////////////////////////////////////////////////////
+
+            //실제 AnyChart Library를 이용해 꺽은선 그래프를 그리는 부분
+            Cartesian cartesian = AnyChart.line();
+
+            cartesian.animation(false);
+
+            cartesian.padding(10d, 20d, 5d, 20d);
+
+            cartesian.crosshair().enabled(true);
+            cartesian.crosshair()
+                    .yLabel(true)
+                    .yStroke((Stroke) null, null, null, (String) null, (String) null);
+
+            cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+
+            cartesian.title(strSelectedAlgorithm);
+
+            cartesian.yAxis(0).title("price");
+            cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+            List<DataEntry> seriesData = new ArrayList<>();
+
+            /////////////////////////////////////////////////////////////////////////////////////
+
+            /**
+             * AnyChart graph를 그리는 데 필요한 dataset을 담을
+             * Set을 생성하는데 그래프와 굉장히 강력하게 bind 되어 있어
+             * 아예 위에서 봤듯이 뷰 전체를 비우는 방식으로 초기화를 하고 있다.
+             */
+            Set set = Set.instantiate();
+
+            final int BUY = 0;
+            final int SELL = 1;
+
+            double avgBuy = 0.0;
+            double avgSell = 0.0;
+
+            //조건에 해당하는 평균들
+            for (int k = 0; k < size; ++k) {
+                ModelTicker.Daily buy = resultList.get(BUY).get(k);
+                ModelTicker.Daily sell = resultList.get(SELL).get(k);
+
+                if (sell != null) {
+                    avgBuy += buy.getHigh();
+                    avgSell += sell.getHigh();
+                }
+            }//end of for
+
+            avgBuy /= size;
+            avgSell /= size;
+
+            //셋에 데이터를 집어 넣어 그래프를 그릴 준비
+            seriesData.add(new AlgorithmDataEntry("buy", avgBuy));
+            seriesData.add(new AlgorithmDataEntry("sell", avgSell));
+
+            set.data(seriesData);
+
+            //x: 가로축, value: 세로축
+            Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+
+            Line series1 = cartesian.line(series1Mapping);
+            series1.name(name);
+            series1.hovered().markers().enabled(true);
+            series1.hovered().markers()
+                    .type(MarkerType.CIRCLE)
+                    .size(4d);
+            series1.tooltip()
+                    .position("right")
+                    .anchor(Anchor.LEFT_CENTER)
+                    .offsetX(5d)
+                    .offsetY(5d);
+
+            cartesian.legend().enabled(true);
+            cartesian.legend().fontSize(14d);
+            cartesian.legend().padding(0d, 0d, 10d, 0d);
+
+            //만들어두었던 anychartview에 그래프를 셋팅
+            anyChartView.setChart(cartesian);
+
+            //알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화 하는 부분.
+            TextView textViewOccurrence = new TextView(viewGroup.getContext());
+            textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size);
+            linearLayout.addView(textViewOccurrence);
+
+        }//end of if exsist resultList
+
+    }//end of draw14DaysAndVolume
+
+    /**
      * 시고저종 그래프를 그리는데 필요한 데이터 셋
      */
     private class OHCLDataEntry extends HighLowDataEntry {

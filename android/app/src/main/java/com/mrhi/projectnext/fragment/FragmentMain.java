@@ -29,6 +29,7 @@ import java.util.LinkedList;
 
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_OPEN_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_CASE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_SURGE_DAYS_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_VOLUME_100PER_INCREASED_CASE;
 
@@ -165,20 +166,30 @@ public class FragmentMain extends Fragment {
                     int day3 = 30;
                     int day4 = 180;
 
+                {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmVolume100PerIncreatedCase(strSelectedTicker, day1, day2, day3, day4);
                     objectAnyChart.drawAlgorithmVolumeDoubleTimedCase(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                }
                     break;
-                case ALGORITHM_FOURTEEN_DAYS_CASE:
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList2 = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmFourteenDaysResult(strSelectedAlgorithm, viewGroup, resultList2);
+                case ALGORITHM_FOURTEEN_DAYS_CASE: {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmFourteenDaysResult(strSelectedAlgorithm, viewGroup, resultList);
+                }
                     break;
-                case ALGORITHM_SURGE_DAYS_CASE:
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList3 = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmSurgeDaysResult(strSelectedAlgorithm, viewGroup, resultList3);
+                case ALGORITHM_SURGE_DAYS_CASE: {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmSwitchPrice(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmSurgeDaysResult(strSelectedAlgorithm, viewGroup, resultList);
+                }
                     break;
-                case ALGORITHM_BUY_OPEN_CASE:
+                case ALGORITHM_BUY_OPEN_CASE: {
                     ArrayList<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmBuyOpenCase(strSelectedTicker);
                     objectAnyChart.drawAlgorithmBuyOpenCase(strSelectedAlgorithm, viewGroup, dailyList);
+                }
+                    break;
+                case ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE: {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmFourteenDaysVolume(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmFourteenDaysVolumeResult(strSelectedAlgorithm, viewGroup, resultList);
+                }
                     break;
             }
         });
