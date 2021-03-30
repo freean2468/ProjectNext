@@ -72,3 +72,6 @@ project/metals.sbt
 
 # paulp script
 /.lib/
+
+# db conf
+/src/main/resources/application.conf

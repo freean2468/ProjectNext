@@ -16,9 +16,9 @@ def crawling (targetUrlList):
     # selenium의 webdriver에 앞서 설지한 chromediriver를 연동
     driver = webdriver.Chrome(driverChrome)
 
-    for url in targetUrlList:
+    for targetUrl in targetUrlList:
         # driver로 특정 페이지를 크롤링
-        driver.get(url)
+        driver.get(targetUrl)
 
         last_height = 0
         new_height = 0
@@ -50,9 +50,14 @@ def crawling (targetUrlList):
         beforeDate = soup.select_one(
                 '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child(2) > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span').get_text()
 
+        jsonArray = []
+
         i = 0
         while 1 :
             i = i + 1
+
+            if i == 3:
+                break
 
             print(i)
 
@@ -123,15 +128,21 @@ def crawling (targetUrlList):
             # print("\n")
 
             mysqlDateForm = datetime.datetime.strptime(date.get_text(), '%b %d, %Y').strftime("%Y-%m-%d")
-            print(mysqlDateForm)
-
-            route = "daily/1?"
-            params = {'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
-                      'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
-                      'volume': volume.get_text().replace(",", "")}
-            requestUrl = localhost + route + urllib.parse.urlencode(params)
+            # print(mysqlDateForm)
             # print(requestUrl)
-            r = requests.post(requestUrl)
+            # r = requests.post(requestUrl)
             # print(r.text)
 
             beforeDate = date.get_text()
+
+            jsonArray.append({'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
+                      'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
+                      'volume': volume.get_text().replace(",", "")
+            })
+
+
+        print("hi!!")
+        route = "dailies"
+        requestUrl = localhost + route
+        r = requests.post(requestUrl, json=jsonArray)
+        print(r.text)

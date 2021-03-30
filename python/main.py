@@ -12,4 +12,4 @@ targetUrl = [
 
 core.crawling(targetUrl)
 
-print('end of loading')
+print('end of crawling')

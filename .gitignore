@@ -18,6 +18,3 @@ python/venv
 
 # aws
 /aws/*.zip
-
-# db conf
-scalatra/src/main/resources/application.conf

@@ -2,6 +2,8 @@ package com.mirae.next
 
 import com.mirae.next.database.QuerySupport
 import com.mirae.next.database.Tables.{Daily, Ticker}
+import org.json4s
+import org.json4s.JsonAST.JObject
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
@@ -88,6 +90,32 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
         contentType = ""
         val ticker = params.getOrElse("ticker", "")
         insertTicker(Ticker(ticker))
+      }
+    }
+  }
+
+  post("/dailies") {
+    val logger = LoggerFactory.getLogger(getClass)
+
+    new AsyncResult { override val is =
+      Future {
+//        val list = for {
+//          jvalue <- parse(request.body)
+//        } jvalue.ex
+//
+//        for (obj <- list) {
+//
+//        }
+
+//        val ticker = params.getOrElse("ticker", "")
+//        val date = params.getOrElse("date", "")
+//        val open = params.getOrElse("open", "").toDouble
+//        val high = params.getOrElse("high", "").toDouble
+//        val low = params.getOrElse("low", "").toDouble
+//        val close = params.getOrElse("close", "").toDouble
+//        val volume = params.getOrElse("volume", "").toLong
+//
+//        insertDaily(Daily(ticker, date, open, high, low, close, volume))
       }
     }
   }
