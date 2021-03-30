@@ -4,7 +4,6 @@ import com.mrhi.projectnext.model.ModelTicker;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,7 +62,6 @@ public class ObjectAlgorithm {
          * 전날 대비 volume이 100%이상 상승한 날 high에 매수 시
          * 다음 날 수익률, 7일 후 수익률, 30일 후 수익률, 180일 후 수익률
          */
-
         ArrayList<ModelTicker.Daily> buyPositions = new ArrayList(){};
         ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
         ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
@@ -199,9 +197,35 @@ public class ObjectAlgorithm {
 
         return resultList;
     }
-    public double maxAndMinAverage()
+    /**
+     * 시나리오 3
+     * 최고가와 최저가의 평균을 내서 그래프에 보여준다.
+     *
+     */
+    public LinkedList<Double> maxAndMinAverage(String name)
     {
-      
-        return 0;
+        double maxValueAvg = 0.0;
+        double minValueAvg = 0.0;
+
+        ModelTicker ticker = getTicker(name);
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        for(int i = 0 ; i < dailyList.size(); i++)
+        {
+            maxValueAvg += dailyList.get(i).getHigh();
+            minValueAvg += dailyList.get(i).getLow();
+        }
+        maxValueAvg /= dailyList.size();
+        minValueAvg /= dailyList.size();
+
+        LinkedList<Double> valueList = new LinkedList<Double>();
+
+        valueList.add(maxValueAvg);
+        valueList.add(minValueAvg);
+
+        return valueList;
     }
 }

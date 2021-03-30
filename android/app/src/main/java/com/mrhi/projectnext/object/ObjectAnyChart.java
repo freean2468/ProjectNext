@@ -13,6 +13,7 @@ import com.anychart.chart.common.dataentry.HighLowDataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
 import com.anychart.charts.Stock;
+import com.anychart.core.cartesian.series.Column;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.core.stock.Plot;
 import com.anychart.data.Mapping;
@@ -20,8 +21,10 @@ import com.anychart.data.Set;
 import com.anychart.data.Table;
 import com.anychart.data.TableMapping;
 import com.anychart.enums.Anchor;
+import com.anychart.enums.HoverMode;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.MovingAverageType;
+import com.anychart.enums.Position;
 import com.anychart.enums.StockSeriesType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
@@ -204,6 +207,89 @@ public class ObjectAnyChart {
     }
     */
 
+    public void drawAlgorithmMaxMinValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
+    {
+        double minValueAvg = 0.0;
+        double maxValueAvg = 0.0;
+        /**
+         * 뷰그룹을 깨끗이 비운다.
+         *
+        */
+        maxValueAvg = valueList.get(0);
+        minValueAvg = valueList.get(1);
+
+        viewGroup.removeAllViewsInLayout();
+
+        /**
+         * 애니차트 라이브러리에 있는 애니 차트 뷰를 불러온다
+        */
+        AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+
+        /**
+         * 애니 차트 뷰를 리니어 레이아웃을 새로 생성하여 위치시킨다
+         * 내부 여백을 왼쪽에만 10을 주었다.
+         * 레이아웃 세팅뒤 뷰를 추가하였다.
+        */
+        anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+        anyChartView.setPadding(10, 0, 0, 0);
+
+        viewGroup.addView(anyChartView);
+
+        LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        ));
+
+        linearLayout.setPadding(10,10,10,10);
+
+        viewGroup.addView(linearLayout);
+
+        /**
+         *   차트의 종류를 선택하고 애니메이션을 보여지 여부를 설정한다
+         *
+         */
+
+        Cartesian cartesian = AnyChart.column();
+
+        List<DataEntry>data = new ArrayList<>();
+        data.add(new ValueDataEntry("최대값 평균",maxValueAvg));
+        data.add(new ValueDataEntry("최소값 평균",minValueAvg));
+
+        Column column = cartesian.column(data);
+
+        column.tooltip()
+                .titleFormat("{%x}")
+                .position(Position.CENTER_BOTTOM)
+                .anchor(Anchor.CENTER_BOTTOM)
+                .offsetX(0d)
+                .offsetY(5d)
+                .format("${%Value}{groupSeparator : }");
+
+        cartesian.animation(false);
+        cartesian.title("최소값과 최대값 평균");
+
+        cartesian.yScale().minimum(0d);
+
+        cartesian.yAxis(0).labels().format("${%Value}{groupsSeparator: }");
+
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+        cartesian.interactivity().hoverMode(HoverMode.BY_X);
+
+        cartesian.xAxis(0).title("최대값 평균");
+        cartesian.yAxis(0).title("최소값 평균");
+
+        anyChartView.setChart(cartesian);
+
+        TextView textView = new TextView(viewGroup.getContext());
+        linearLayout.addView(textView);
+    }
+
+
     /**
      * 전일 대비 거래량이 100% 상승했을 때 high에서 매수한 시점에서
      * day1, day2, day3, day4 이후의 가격 평균을 도출하는 알고리즘.
@@ -217,6 +303,7 @@ public class ObjectAnyChart {
      * @param day3
      * @param day4
      */
+
     public void drawAlgorithmTestResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
