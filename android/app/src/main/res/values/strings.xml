@@ -16,6 +16,7 @@
         <item>open에 매수하면 close와 비교할 때 수익을 낼 확률</item>
         <item>14일 중 가격과 거래량 상승이 8일 이상일 시 14일째의 매도 가격의 평균</item>
         <item>저가로 매수했을 시 매수 매수 시점 이후 가격 평균</item>
+        <item>거래량과 종가가 3일 이상 연속으로 하락할 때를 매수 시점으로 한 가격 평균</item>
     </string-array>
 
 </resources>

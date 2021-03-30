@@ -26,6 +26,7 @@ public class ObjectAlgorithm {
     public static final int ALGORITHM_BUY_OPEN_CASE = 3;
     public static final int ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE = 4;
     public static final int ALGORITHM_BUY_LOW_CASE = 5;
+    public static final int ALGORITHM_VOLUNE_PRICE_DECREASE_3DAYS_CASE = 6;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -411,5 +412,92 @@ public class ObjectAlgorithm {
 
         return resultList;
     }//end of algorithmBuyLow
+
+    /**
+     * close가 decreaseDay(현재는 3일)일 연속으로 하락 후 매수 시,
+     * 다음날, 일주일 후, 한달 후, 6개월 후의 close에 대한 수익률
+     * @param name
+     * @return
+     */
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolumeAndPriceDecrease5daysCase(String name, int nextDay, int oneWeek, int oneMonth, int sixMonth, int decreaseDay){
+        /**
+         * 현재 선택된 종목으로 알고리즘 실행
+         */
+        ModelTicker ticker = getTicker(name);
+
+        ArrayList<ModelTicker.Daily> buyPositions = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions3 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions4 = new ArrayList<>();
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
+
+        ModelTicker.Daily yesterday = null;
+
+        int count = 0;
+        for (int i = 0; i < dailyList.size(); ++i) {
+            ModelTicker.Daily today = dailyList.get(i);
+            if (yesterday != null) {
+                if (yesterday.getClose() > today.getClose()) {
+                    count++;
+
+                    if(count >= decreaseDay){
+                        buyPositions.add(today);
+
+                        ModelTicker.Daily daily1;
+                        ModelTicker.Daily daily2;
+                        ModelTicker.Daily daily3;
+                        ModelTicker.Daily daily4;
+
+                        try {
+                            daily1 = dailyList.get(i + nextDay);
+                        } catch (IndexOutOfBoundsException ioobe) {
+                            daily1 = null;
+                        }
+                        try {
+                            daily2 = dailyList.get(i + oneWeek);
+                        } catch (IndexOutOfBoundsException ioobe) {
+                            daily2 = null;
+                        }
+                        try {
+                            daily3 = dailyList.get(i + oneMonth);
+                        } catch (IndexOutOfBoundsException ioobe) {
+                            daily3 = null;
+                        }
+                        try {
+                            daily4 = dailyList.get(i + sixMonth);
+                        } catch (IndexOutOfBoundsException ioobe) {
+                            daily4 = null;
+                        }
+
+                        positions1.add(daily1);
+                        positions2.add(daily2);
+                        positions3.add(daily3);
+                        positions4.add(daily4);
+
+                        count = 0;
+                    }
+                } else {
+                    count = 0;
+                }
+            }//end of if yesterDay null
+
+            yesterday = today;
+        }
+
+        resultList.add(buyPositions);
+        resultList.add(positions1);
+        resultList.add(positions2);
+        resultList.add(positions3);
+        resultList.add(positions4);
+
+        return resultList;
+
+    }//end of algorithmVolumeAndPriceDecreaseCase
 
 }

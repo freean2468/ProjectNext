@@ -1129,6 +1129,199 @@ public class ObjectAnyChart {
     }//end of drawBuyLow
 
     /**
+     * @author 허선영
+     */
+    public void drawAlgorithmVolumeAndPriceDecrease5daysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int nextDay, int oneWeek, int oneMonth, int sixMonth, int decreaseDays) {
+        /**
+         * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
+         */
+        viewGroup.removeAllViewsInLayout();
+        String name = String.valueOf(nextDay) + " | " + String.valueOf(oneWeek) + " | " + String.valueOf(oneMonth) + " | " + String.valueOf(sixMonth);
+
+        /**
+         * 알고리즘 매칭되는 부분이 없을 수도 있다.
+         */
+        if (resultList.get(0).size() > 0) {
+            int size = resultList.get(0).size();
+
+            /**
+             * 새로운 AnyChartView를 xml이 아니라 코드상에서 직접 생성하고
+             */
+            AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+            /**
+             * Layout을 설정
+             */
+            anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1));
+            anyChartView.setPadding(10, 0, 0, 0);
+
+            /**
+             * FragmentAlgorithmResult의 LinearLayout에 추가해준다.
+             */
+            viewGroup.addView(anyChartView);
+
+            /**
+             * 계산해낸 평균 결과 도출은 그래프를 통해 화면 절반에 도식하고
+             * 나머지 절반에 도출해낸 수치들을 표시하기 위해
+             * LinearLayout을 또 만들어 추가해준다.
+             */
+            LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1
+            ));
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            linearLayout.setPadding(10, 10, 10, 10);
+
+            viewGroup.addView(linearLayout);
+
+            /**
+             * 실제 AnyChart Library를 이용해 꺽은선 그래프를 그리는 부분
+             * 자세한 사항들은
+             * https://github.com/AnyChart/AnyChart-Android 코드 예제들을 보고 적용할 것.
+             */
+            Cartesian cartesian = AnyChart.line();
+
+            cartesian.animation(false);
+
+            cartesian.padding(10d, 20d, 5d, 20d);
+
+            cartesian.crosshair().enabled(true);
+            cartesian.crosshair()
+                    .yLabel(true)
+                    .yStroke((Stroke) null, null, null, (String) null, (String) null);
+
+            cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+
+            cartesian.title(strSelectedAlgorithm);
+
+            cartesian.yAxis(0).title("price");
+            cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+            List<DataEntry> seriesData = new ArrayList<>();
+
+            /**
+             * AnyChart graph를 그리는 데 필요한 dataset을 담을
+             * Set을 생성하는데 그래프와 굉장히 강력하게 bind 되어 있어
+             * 아예 위에서 봤듯이 뷰 전체를 비우는 방식으로 초기화를 하고 있다.
+             */
+            Set set = Set.instantiate();
+
+            final int BUY = 0;
+            final int DAY_1 = 1;
+            final int DAY_2 = 2;
+            final int DAY_3 = 3;
+            final int DAY_4 = 4;
+
+            double avgBuy = 0.0;
+            double avgDay1 = 0.0;
+            double avgDay2 = 0.0;
+            double avgDay3 = 0.0;
+            double avgDay4 = 0.0;
+
+            int count = 0;
+
+            /**
+             * 조건에 해당하는 결과들의 평균을 구하고
+             */
+            for (int k = 0; k < size; ++k) {
+                ModelTicker.Daily buy = resultList.get(BUY).get(k);
+                ModelTicker.Daily day1Daily = resultList.get(DAY_1).get(k);
+                ModelTicker.Daily day2Daily = resultList.get(DAY_2).get(k);
+                ModelTicker.Daily day3Daily = resultList.get(DAY_3).get(k);
+                ModelTicker.Daily day4Daily = resultList.get(DAY_4).get(k);
+
+                if (day4Daily != null) {
+                    avgDay4 += day4Daily.getClose();
+                    avgDay3 += day3Daily.getClose();
+                    avgDay2 += day2Daily.getClose();
+                    avgDay1 += day1Daily.getClose();
+                    avgBuy += buy.getClose();
+                } else {
+                    count++;
+                }
+            }
+
+            avgBuy /= size - count;
+            avgDay1 /= size - count;
+            avgDay2 /= size - count;
+            avgDay3 /= size - count;
+            avgDay4 /= size - count;
+
+            /**
+             * 셋에 데이터를 집어 넣어 그래프를 그릴 준비
+             */
+            seriesData.add(new AlgorithmDataEntry("buy", avgBuy));
+            seriesData.add(new AlgorithmDataEntry(nextDay + "d", avgDay1));
+            seriesData.add(new AlgorithmDataEntry(oneWeek + "d", avgDay2));
+            seriesData.add(new AlgorithmDataEntry(oneMonth + "d", avgDay3));
+            seriesData.add(new AlgorithmDataEntry(sixMonth + "d", avgDay4));
+
+            set.data(seriesData);
+
+            /**
+             * x : 가로축 값
+             * value : 세로축 값
+             */
+            Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+
+            Line series1 = cartesian.line(series1Mapping);
+            series1.name(name);
+            series1.hovered().markers().enabled(true);
+            series1.hovered().markers()
+                    .type(MarkerType.CIRCLE)
+                    .size(4d);
+            series1.tooltip()
+                    .position("right")
+                    .anchor(Anchor.LEFT_CENTER)
+                    .offsetX(5d)
+                    .offsetY(5d);
+
+            cartesian.legend().enabled(true);
+            cartesian.legend().fontSize(14d);
+            cartesian.legend().padding(0d, 0d, 10d, 0d);
+
+            /**
+             * 만들어두었던 anychartview에 그래프를 셋팅
+             */
+            anyChartView.setChart(cartesian);
+
+            /**
+             * 알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화
+             */
+            TextView textViewOccurrence = new TextView(viewGroup.getContext());
+            textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size);
+            linearLayout.addView(textViewOccurrence);
+
+            TextView textViewEarningRateDay1 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay1.setText("매수 시점 기준 " + nextDay +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay1 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay1);
+
+            TextView textViewEarningRateDay2 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay2.setText("매수 시점 기준 " + oneWeek +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay2 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay2);
+
+            TextView textViewEarningRateDay3 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay3.setText("매수 시점 기준 " + oneMonth +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay3 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay3);
+
+            TextView textViewEarningRateDay4 = new TextView(viewGroup.getContext());
+            textViewEarningRateDay4.setText("매수 시점 기준 " + sixMonth +"일 후 평균 수익률 : " +
+                    Helper.round((avgDay4 - avgBuy)/avgBuy*100, 2) + "%");
+            linearLayout.addView(textViewEarningRateDay4);
+        } else {
+            Log.d("debug", "no matching");
+        }
+
+    }//end of VolumeAndPriceDecrease5days
+
+    /**
      * 시고저종 그래프를 그리는데 필요한 데이터 셋
      */
     private class OHCLDataEntry extends HighLowDataEntry {
