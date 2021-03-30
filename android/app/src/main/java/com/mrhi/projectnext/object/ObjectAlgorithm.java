@@ -27,6 +27,7 @@ public class ObjectAlgorithm {
     public static final int ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE = 4;
     public static final int ALGORITHM_BUY_LOW_CASE = 5;
     public static final int ALGORITHM_VOLUNE_PRICE_DECREASE_3DAYS_CASE = 6;
+    public static final int ALGORITHM_OHLC_CASE = 7;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -218,13 +219,12 @@ public class ObjectAlgorithm {
         return resultList;
     }//end of algorithmFourteenDays
 
+    /**
+     * 떨어지는 주가가 다시 상한가로 전환되는데까지 걸리는 평균 일수
+     * rapunzel algorithm
+     */
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithmSwitchPrice(String name) {
-        /*
-            rapunzel algorithm
-            떨어지는 주가가 다시 상한가로 전환되는데까지 걸리는 평균 일수
-         */
         //name: spinner에서 선택한 종목명
-
         //현재 스피너에서 선택한 종목명으로 알고리즘을 실행
         ModelTicker ticker = getTicker(name);
 
@@ -499,5 +499,23 @@ public class ObjectAlgorithm {
         return resultList;
 
     }//end of algorithmVolumeAndPriceDecreaseCase
+
+    /**
+     * open, high, low, close의 하루 변동률의 평균
+     * @param name
+     * @return
+     */
+    public List<ModelTicker.Daily> algorithmOHLCcase(String name){
+        /**
+         * 현재 선택된 종목으로 알고리즘 실행
+         */
+        ModelTicker ticker = getTicker(name);
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        return dailyList;
+    }//end of algorithmOLCDCase
 
 }
