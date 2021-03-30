@@ -26,12 +26,16 @@ import com.mrhi.projectnext.object.ObjectVolley;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_LOW_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_OPEN_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_OHLC_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_SURGE_DAYS_CASE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_VOLUME_100PER_INCREASED_CASE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_VOLUNE_PRICE_DECREASE_3DAYS_CASE;
 
 /**
  * 첫 화면, 메인 화면을 담당한 FragmentMain
@@ -191,6 +195,34 @@ public class FragmentMain extends Fragment {
                     objectAnyChart.drawAlgorithmFourteenDaysVolumeResult(strSelectedAlgorithm, viewGroup, resultList);
                 }
                     break;
+                case ALGORITHM_BUY_LOW_CASE:{
+                    int day = 0;
+                    int nextDay = 1;
+                    int oneWeek = 7;
+                    int oneMonth = 30;
+                    int sixMonth = 180;
+
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmBuyLow(strSelectedTicker, day, nextDay, oneWeek, oneMonth, sixMonth);
+                    objectAnyChart.drawAlgorithmBuyLowResult(strSelectedAlgorithm, viewGroup, resultList, day, nextDay, oneWeek, oneMonth, sixMonth);
+                }
+                    break;
+                case ALGORITHM_VOLUNE_PRICE_DECREASE_3DAYS_CASE:{
+                    int nextDay = 1;
+                    int oneWeek = 7;
+                    int oneMonth = 30;
+                    int sixMonth = 180;
+
+                    int decreaseDay = 3;
+
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmVolumeAndPriceDecrease5daysCase(strSelectedTicker, nextDay, oneWeek, oneMonth, sixMonth, decreaseDay);
+                    objectAnyChart.drawAlgorithmVolumeAndPriceDecrease5daysResult(strSelectedAlgorithm, viewGroup, resultList, nextDay, oneWeek, oneMonth, sixMonth, decreaseDay);
+                }
+                break;
+                case ALGORITHM_OHLC_CASE:{
+                    List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmOHLCcase(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmOHLCResult(strSelectedAlgorithm, viewGroup, dailyList);
+                }
+                break;
             }
         });
 
