@@ -212,7 +212,7 @@ public class ObjectAnyChart {
     }
     */
 
-    public void drawAlgorithmMaxMinGapValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
+    public void draw_HIGH_LOW(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
     {
         //Pooh algorithm
         double minValueAvg = 0.0;
@@ -294,7 +294,7 @@ public class ObjectAnyChart {
         linearLayout.addView(textView);
     }
 
-    public void yesterdayCloseGapValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> gapList)
+    public void draw_CLOSE_OPEN(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> gapList)
     {
         viewGroup.removeAllViewsInLayout();
 
@@ -372,13 +372,7 @@ public class ObjectAnyChart {
         textView2.setText("알고리즘 매칭 횟수 : " + gapList.size());
         linearLayout.addView(textView2);
     }
-
-
-
-
-
-
-
+    
     /**
      * 전일 대비 거래량이 100% 상승했을 때 high에서 매수한 시점에서
      * day1, day2, day3, day4 이후의 가격 평균을 도출하는 알고리즘.
@@ -392,7 +386,7 @@ public class ObjectAnyChart {
      * @param day4
      * @author 송훈일 (freean2468@gmail.com)
      */
-    public void drawAlgorithmVolumeDoubleTimedCase(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
+    public void draw_VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
@@ -579,7 +573,7 @@ public class ObjectAnyChart {
         }
     }
 
-    public void drawAlgorithmBuyOpenCase(String strSelectedAlgorithm, ViewGroup viewGroup, ArrayList<ModelTicker.Daily> resultList) {
+    public void draw_BUY_OPEN_SELL_CLOSE(String strSelectedAlgorithm, ViewGroup viewGroup, ArrayList<ModelTicker.Daily> resultList) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
@@ -743,7 +737,7 @@ public class ObjectAnyChart {
      *
      * @author 허선영
      */
-    public void drawAlgorithmFourteenDaysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
+    public void draw_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
         //기존에 있던 뷰 정리
         viewGroup.removeAllViewsInLayout();
         String name = "firstDay, high" + " | " + "lastDay, high";
@@ -870,14 +864,14 @@ public class ObjectAnyChart {
      *
      * @author 허선영
      */
-    public void drawAlgorithmSurgeDaysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList3) {
+    public void draw_RECOVERING(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
         //기존에 있던 뷰 정리
         viewGroup.removeAllViewsInLayout();
-        String name = "slidingDate, close" + " | " + "recoveredDate, close";
+        String name = "sliding close | recovered close";
 
         //알고리즘에 매칭되는 부분이 없을 수 있음
-        if (resultList3.get(0).size() > 0) {
-            int size = resultList3.get(0).size();
+        if (resultList.get(0).size() > 0) {
+            int size = resultList.get(0).size();
 
             //새로운 anyChart생성 부분
             AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
@@ -943,8 +937,8 @@ public class ObjectAnyChart {
 
             //조건에 해당하는 평균들
             for (int k = 0; k < size; ++k) {
-                ModelTicker.Daily slide = resultList3.get(SLIDE).get(k);
-                ModelTicker.Daily recover = resultList3.get(RECOVER).get(k);
+                ModelTicker.Daily slide = resultList.get(SLIDE).get(k);
+                ModelTicker.Daily recover = resultList.get(RECOVER).get(k);
 
                 if (recover != null) {
                     avgSlide += slide.getClose();
@@ -967,8 +961,8 @@ public class ObjectAnyChart {
             avgDate /= size;
 
             //set에 데이터를 집어 넣어 그래프를 그릴 준비
-            seriesData.add(new AlgorithmDataEntry("slide", avgSlide));
-            seriesData.add(new AlgorithmDataEntry("recover", avgRecover));
+            seriesData.add(new AlgorithmDataEntry("slide", Helper.round(avgSlide, 2)));
+            seriesData.add(new AlgorithmDataEntry("recover", Helper.round(avgRecover, 2)));
 
             set.data(seriesData);
 
@@ -1009,7 +1003,7 @@ public class ObjectAnyChart {
      *
      * @author 허선영
      */
-    public void drawAlgorithmFourteenDaysVolumeResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
+    public void draw_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
         //기존에 있던 뷰 정리
         viewGroup.removeAllViewsInLayout();
         String name = "firstDay, high" + " | " + "lastDay, high";
@@ -1136,7 +1130,7 @@ public class ObjectAnyChart {
      *
      * @author 허선영
      */
-    public void drawAlgorithmBuyLowResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day0, int day1, int day2, int day3, int day4) {
+    public void draw_BUY_LOW(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day0, int day1, int day2, int day3, int day4) {
         //기존에 있던 뷰 정리
         viewGroup.removeAllViewsInLayout();
         String name = String.valueOf(day0) + " | " + String.valueOf(day1) + " | " + String.valueOf(day2) + " | " + String.valueOf(day3) + " | " + String.valueOf(day4);
@@ -1318,7 +1312,7 @@ public class ObjectAnyChart {
      *
      * @author 허선영
      */
-    public void drawAlgorithmVolumeAndPriceDecrease5daysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4, int decreaseDays) {
+    public void draw_BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4, int decreaseDays) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
@@ -1513,7 +1507,7 @@ public class ObjectAnyChart {
      *
      * @author 허선영
      */
-    public void drawAlgorithmOHLCResult(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, List<ModelTicker.Daily> dailyList) {
+    public void draw_FLUCTUATION_RATE_ONE_DAY(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, List<ModelTicker.Daily> dailyList) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
@@ -1655,7 +1649,7 @@ public class ObjectAnyChart {
      * @param viewGroup
      * @param resultList     *
      */
-    public void drawAlgorithmCloseFluctuationRateResult(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
+    public void draw_FLUCTUATION_RATE_SEVERAL_DAYS(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */

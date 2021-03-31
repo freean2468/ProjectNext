@@ -22,8 +22,8 @@ create table if not exists daily_table(
     constraint fk_ticker foreign key(ticker) references ticker_table(ticker) on update cascade on delete cascade
 );
 
-select * from ticker_table;
-select * from daily_table;
-select count(*) from daily_table;
+select * from `next`.`ticker_table`;
+select * from `next`.`daily_table`;
+select count(*) from `next`.`daily_table`;
 
-select count(*) from daily_table where ticker="AAPl";
+select count(*) from `next`.`daily_table` where ticker="AAPl";

@@ -10,18 +10,18 @@
     <string name="url_daily">daily/1?</string>
 
     <string-array name="algorithmList">
-        <item>전일대비 거래량이 100% 증가한 날 high에 매수 시점 이후 가격 평균</item>
-        <item>14일 중 가격상승이 8일 이상일 시 14일째의 매도 가격의 평균</item>
-        <item>떨어지는 주가가 다시 회복하기까지 걸리는 평균시간</item>
-        <item>open에 매수하면 close와 비교할 때 수익을 낼 확률</item>
-        <item>14일 중 가격과 거래량 상승이 8일 이상일 시 14일째의 매도 가격의 평균</item>
-        <item>저가로 매수했을 시 매수 매수 시점 이후 가격 평균</item>
-        <item>거래량과 종가가 3일 이상 연속으로 하락할 때를 매수 시점으로 한 가격 평균</item>
-        <item>시가, 고가, 저가, 종가 전일대비 하루 변동률 평균</item>
-        <item>종가를 기준으로 특정일로부터 일정기간 변동률의 평균</item>
-        <item>전일대비 거래량이 100% 줄어든날 Low에 매수 시점 이후 가격 평균</item>
-        <item>최대값과 최소값의 평균을 나타내고 평균값의 차이</item>
-        <item>어제 장이 닫힐떄 가격과 오늘 장이 열릴때 가격의 차이</item>
+        <item>가격평균_전일대비_거래량_100%_증가_high_매수</item>
+        <item>가격평균_전일대비_거래량_100%_감소_low_매수</item>
+        <item>가격평균_가격상승_14일중_8일이상_14일째_매도</item>
+        <item>가격평균_가격_거래량상승_14일중_8일이상_14일째_매도</item>
+        <item>가격평균_high_low</item>
+        <item>가격평균_close_open</item>
+        <item>가격평균_low매수</item>
+        <item>가격평균_연속하락_3일연속_close매수</item>
+        <item>평균시간_가격회복</item>
+        <item>확률_open매수_close매도</item>
+        <item>변동률평균_하루</item>
+        <item>뱐동률평균_특정기간</item>
     </string-array>
 
 </resources>

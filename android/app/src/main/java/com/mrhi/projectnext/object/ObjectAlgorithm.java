@@ -20,15 +20,18 @@ import java.util.TreeSet;
  * @author 송훈일(freean2468 @ gmail.com)
  */
 public class ObjectAlgorithm {
-    public static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
-    public static final int ALGORITHM_FOURTEEN_DAYS_CASE = 1;
-    public static final int ALGORITHM_SURGE_DAYS_CASE = 2;
-    public static final int ALGORITHM_BUY_OPEN_CASE = 3;
-    public static final int ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE = 4;
-    public static final int ALGORITHM_BUY_LOW_CASE = 5;
-    public static final int ALGORITHM_PRICE_DECREASE_3DAYS_CASE = 6;
-    public static final int ALGORITHM_OHLC_CASE = 7;
-    public static final int ALGORITHM_CLOSE_FLUCTUATION_CASE = 8;
+    public static final int VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY = 0;
+    public static final int VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY = VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY + 1;
+    public static final int SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS = VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY + 1;
+    public static final int SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME = SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS + 1;
+    public static final int HIGH_LOW = SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME + 1;
+    public static final int CLOSE_OPEN = HIGH_LOW + 1;
+    public static final int BUY_LOW = CLOSE_OPEN + 1;
+    public static final int BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS = BUY_LOW + 1;
+    public static final int RECOVERING = BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS + 1;
+    public static final int BUY_OPEN_SELL_CLOSE = RECOVERING + 1;
+    public static final int FLUCTUATION_RATE_ONE_DAY = BUY_OPEN_SELL_CLOSE + 1;
+    public static final int FLUCTUATION_RATE_SEVERAL_DAYS = FLUCTUATION_RATE_ONE_DAY + 1;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -75,7 +78,7 @@ public class ObjectAlgorithm {
      * @return
      * @auth 송훈일
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolume100PerIncreatedCase(String name, int day1, int day2, int day3, int day4) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY(String name, int day1, int day2, int day3, int day4) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -143,7 +146,7 @@ public class ObjectAlgorithm {
         return resultList;
     }
 
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmTest2(String name, int day1, int day2, int day3, int day4) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY(String name, int day1, int day2, int day3, int day4) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -222,7 +225,7 @@ public class ObjectAlgorithm {
      *
      * @authour 송훈일
      */
-    public ArrayList<ModelTicker.Daily> algorithmBuyOpenCase(String name) {
+    public ArrayList<ModelTicker.Daily> algorithm_BUY_OPEN_SELL_CLOSE(String name) {
         ModelTicker ticker = getTicker(name);
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         ArrayList<ModelTicker.Daily> dailyList = new ArrayList<>();
@@ -239,7 +242,7 @@ public class ObjectAlgorithm {
      * @param name
      * @return
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmFourteenDays(String name) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS(String name) {
         /*
             rapunzel algorithm
             14일의 기간 중, 8일 동안 가격상승이 이루어졌을 때 첫날 매수하여 14일 째 되는 날 매도했을 때의 수익률
@@ -297,24 +300,22 @@ public class ObjectAlgorithm {
         resultList.add(sellDate);
 
         return resultList;
-    }//end of algorithmFourteenDays
+    }//end of algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS
 
     /**
      * 떨어지는 주가가 다시 상한가로 전환되는데까지 걸리는 평균 일수
      *
      * @author 허선영
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmSwitchPrice(String name) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_RECOVERING(String name) {
         //name: spinner에서 선택한 종목명
         //현재 스피너에서 선택한 종목명으로 알고리즘을 실행
         ModelTicker ticker = getTicker(name);
 
         //떨어지기 시작하는 날 = today
-        ArrayList<ModelTicker.Daily> slidingDate = new ArrayList() {
-        };
+        ArrayList<ModelTicker.Daily> slidingDate = new ArrayList() {};
         //회복하는 날
-        ArrayList<ModelTicker.Daily> recoveredDate = new ArrayList() {
-        };
+        ArrayList<ModelTicker.Daily> recoveredDate = new ArrayList() {};
 
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
@@ -342,15 +343,15 @@ public class ObjectAlgorithm {
                         }
                     }
                 }//end of if
-                yesterday = today;
             }//end of if not null yesterday
+            yesterday = today;
         }//end of for OneYear
 
         resultList.add(slidingDate);
         resultList.add(recoveredDate);
 
         return resultList;
-    }//end of algorithmSwitchPrice
+    }//end of algorithm_RECOVERING
 
     /**
      * 14일 동안 종가의 가격과 거래량 상승이 이루어진 날이 8일 이상일 때,
@@ -360,7 +361,7 @@ public class ObjectAlgorithm {
      * @return
      * @author 허선영
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmFourteenDaysVolume(String name) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME(String name) {
         //현재 스피너에서 선택한 종목명으로 알고리즘을 실행
         ModelTicker ticker = getTicker(name);
 
@@ -410,7 +411,7 @@ public class ObjectAlgorithm {
 
         return resultList;
 
-    }//end of algorithmFourteenDaysVolume
+    }//end of algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME
 
     /**
      * 시나리오 3
@@ -418,7 +419,7 @@ public class ObjectAlgorithm {
      * 최고가 평균과 최저가의 평균값의 차이를 평균을 내어서 보여주어 투자 여부를 결정하게 한다.
      *
      */
-    public LinkedList<Double> maxAndMinAverage(String name)
+    public LinkedList<Double> algorithm_HIGH_LOW(String name)
     {
         double maxValueAvg = 0.0;
         double minValueAvg = 0.0;
@@ -450,7 +451,7 @@ public class ObjectAlgorithm {
     }
     //
 
-    public LinkedList<Double> yesterdayCloseGapValue(String name)
+    public LinkedList<Double> algorithm_CLOSE_OPEN(String name)
     {
         //Pooh Algorithm
         double yesterdayCloseValue = 0.0;
@@ -495,7 +496,7 @@ public class ObjectAlgorithm {
      * @return
      * @author 허선영
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmBuyLow(String name, int day0, int day1, int day2, int day3, int day4) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_BUY_LOW(String name, int day0, int day1, int day2, int day3, int day4) {
         /**
          * rapunzel algorithm
          * 저가에 매수 시 그날 종가, 다음날, 일주일 후, 한달 후, 6개월 후의 종가에 대한 수익률
@@ -576,7 +577,7 @@ public class ObjectAlgorithm {
         resultList.add(positions5);
 
         return resultList;
-    }//end of algorithmBuyLow
+    }//end of algorithm_BUY_LOW
 
     /**
      * close가 decreaseDay(현재는 3일)일 연속으로 하락 후 매수 시,
@@ -586,7 +587,7 @@ public class ObjectAlgorithm {
      * @return
      * @author 허선영
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolumeAndPriceDecrease5daysCase(String name, int day1, int day2, int day3, int day4, int decreaseDay) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS(String name, int day1, int day2, int day3, int day4, int decreaseDay) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -674,7 +675,7 @@ public class ObjectAlgorithm {
      * @return
      * @author 허선영
      */
-    public List<ModelTicker.Daily> algorithmOHLCcase(String name)
+    public List<ModelTicker.Daily> algorithm_FLUCTUATION_RATE_ONE_DAY(String name)
     {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
@@ -693,7 +694,7 @@ public class ObjectAlgorithm {
      *
      * @author 허선영
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmCloseFluctuationRateCase(String name, int day1, int day2, int day3, int day4) {
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_FLUCTUATION_RATE_SEVERAL_DAYS(String name, int day1, int day2, int day3, int day4) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -750,7 +751,7 @@ public class ObjectAlgorithm {
         resultList.add(positions4);
 
         return resultList;
-    }//end of algorithmCloseFluctuationRateCase
+    }//end of algorithm_FLUCTUATION_RATE_SEVERAL_DAYS
 
 }
 

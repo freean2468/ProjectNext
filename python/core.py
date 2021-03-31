@@ -12,7 +12,7 @@ SCROLL_PAUSE_SEC = 0.2
 
 def crawling (targetUrlList):
     # selenium에서 사용할 웹 드라이버 상대 경로 정보
-    driverChrome = './chromedriver_win'
+    driverChrome = './chromedriver'
     # selenium의 webdriver에 앞서 설지한 chromediriver를 연동
     driver = webdriver.Chrome(driverChrome)
 
@@ -65,22 +65,22 @@ def crawling (targetUrlList):
             if date is None:
                 break
 
-            # print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
+            print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
 
             if date.get_text() == beforeDate:
                 continue
             elif date is not None:
                 ""
-                # print(date.get_text())
+                print(date.get_text())
             else:
-                # print(date)
+                print(date)
                 break
 
             open = soup.select_one(
                 '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(2) > span')
 
             if open is not None:
-                # print(open.get_text())
+                print(open.get_text())
                 ""
             elif str(open)[:-6].find('span') <= 0:
                 continue
@@ -91,66 +91,57 @@ def crawling (targetUrlList):
                 '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(3) > span')
             if high is not None:
                 ""
-                # print(high.get_text())
+                print(high.get_text())
             else:
-                # print(high)
+                print(high)
                 break
 
             low = soup.select_one(
                 '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(4) > span')
             if low is not None:
                 ""
-                # print(low.get_text())
+                print(low.get_text())
             else:
-                # print(low)
+                print(low)
                 break
 
             close = soup.select_one(
                 '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(5) > span')
             if close is not None:
                 ""
-                # print(close.get_text())
+                print(close.get_text())
             else:
-                # print(close)
+                print(close)
                 break
 
             volume = soup.select_one(
                 '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(7) > span')
             if volume is not None:
                 ""
-                # print(volume.get_text())
+                print(volume.get_text())
             else:
-                # print(volume)
+                print(volume)
                 break
 
-            # print("\n")
-
             mysqlDateForm = datetime.datetime.strptime(date.get_text(), '%b %d, %Y').strftime("%Y-%m-%d")
-            # print(mysqlDateForm)
-            # print(requestUrl)
-            # r = requests.post(requestUrl)
-            # print(r.text)
 
-            route = "daily/1?"
-            params = {'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
-                      'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""),
-                      'close': close.get_text().replace(",", ""),
-                      'volume': volume.get_text().replace(",", "")}
-            requestUrl = localhost + route + urllib.parse.urlencode(params)
-            # print(mysqlDateForm)
-            # print(requestUrl)
-            r = requests.post(requestUrl)
+            # route = "daily/1?"
+            # params = {'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
+            #           'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""),
+            #           'close': close.get_text().replace(",", ""),
+            #           'volume': volume.get_text().replace(",", "")}
+            # requestUrl = localhost + route + urllib.parse.urlencode(params)
+            # r = requests.post(requestUrl)
 
             beforeDate = date.get_text()
 
-            # jsonArray.append({'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
-            #           'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
-            #           'volume': volume.get_text().replace(",", "")
-            # })
+            jsonArray.append({'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
+                      'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
+                      'volume': volume.get_text().replace(",", "")
+            })
 
 
-        # print("hi!!")
-        # route = "dailies"
-        # # requestUrl = localhost + route
-        # # r = requests.post(requestUrl, json=jsonArray)
+        route = "dailies"
+        requestUrl = localhost + route
+        r = requests.post(requestUrl, json=jsonArray)
         # print(r.text)

@@ -1,6 +1,7 @@
 package com.mrhi.projectnext.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,15 +29,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_LOW_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_BUY_OPEN_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_CLOSE_FLUCTUATION_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_OHLC_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_SURGE_DAYS_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_VOLUME_100PER_INCREASED_CASE;
-import static com.mrhi.projectnext.object.ObjectAlgorithm.ALGORITHM_PRICE_DECREASE_3DAYS_CASE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.BUY_LOW;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.BUY_OPEN_SELL_CLOSE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.CLOSE_OPEN;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.FLUCTUATION_RATE_ONE_DAY;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.FLUCTUATION_RATE_SEVERAL_DAYS;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.HIGH_LOW;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.RECOVERING;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY;
 
 /**
  * 첫 화면, 메인 화면을 담당한 FragmentMain
@@ -51,11 +55,6 @@ public class FragmentMain extends Fragment {
     private String strSelectedTicker;
     private int nSelectedAlgorithm;
     private String strSelectedAlgorithm;
-
-    private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
-    private static final int ALGORITHM_VOLUME_100PER_DECREASED_CASE = 1;
-    private static final int ALGORITHM_MAX_MIN_AVERAGE_GAP = 2;
-    private static final int ALGORITHM_YESTERDAY_CLOSE_GAPVALUE = 3;
 
     private FragmentMain(){
 
@@ -170,48 +169,55 @@ public class FragmentMain extends Fragment {
             ViewGroup viewGroup = FragmentAlgorithmResult.getInstance().getViewGroup();
 
             switch (nSelectedAlgorithm) {
-                case ALGORITHM_VOLUME_100PER_INCREASED_CASE:{
+                case VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY: {
                     int day1 = 1;
                     int day2 = 7;
                     int day3 = 30;
                     int day4 = 180;
 
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmVolume100PerIncreatedCase(strSelectedTicker, day1, day2, day3, day4);
-                    objectAnyChart.drawAlgorithmVolumeDoubleTimedCase(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.draw_VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
                 }
                     break;
-                case ALGORITHM_FOURTEEN_DAYS_CASE: {
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmFourteenDays(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmFourteenDaysResult(strSelectedAlgorithm, viewGroup, resultList);
+                case VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY: {
+                    int day1 = 1;
+                    int day2 = 7;
+                    int day3 = 30;
+                    int day4 = 180;
+                    LinkedList<ArrayList<ModelTicker.Daily>> mResultList = objectAlgorithm.algorithm_VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.draw_VOLUME_2_TIMES_INCREASED_MORE_THAN_YESTERDAY(strSelectedAlgorithm, viewGroup, mResultList, day1, day2, day3, day4);
                 }
                     break;
-                case ALGORITHM_SURGE_DAYS_CASE: {
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmSwitchPrice(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmSurgeDaysResult(strSelectedAlgorithm, viewGroup, resultList);
+                case SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS: {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS(strSelectedTicker);
+                    objectAnyChart.draw_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS(strSelectedAlgorithm, viewGroup, resultList);
                 }
                     break;
-                case ALGORITHM_BUY_OPEN_CASE: {
-                    ArrayList<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmBuyOpenCase(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmBuyOpenCase(strSelectedAlgorithm, viewGroup, dailyList);
+                case SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME: {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME(strSelectedTicker);
+                    objectAnyChart.draw_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME(strSelectedAlgorithm, viewGroup, resultList);
                 }
                     break;
-                case ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE: {
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmFourteenDaysVolume(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmFourteenDaysVolumeResult(strSelectedAlgorithm, viewGroup, resultList);
-                }
+                case HIGH_LOW:
+                    LinkedList<Double> mAverage = objectAlgorithm.algorithm_HIGH_LOW(strSelectedTicker);
+                    objectAnyChart.draw_HIGH_LOW(strSelectedAlgorithm, viewGroup, mAverage);
                     break;
-                case ALGORITHM_BUY_LOW_CASE:{
+                case CLOSE_OPEN :
+                    LinkedList<Double> mGap = objectAlgorithm.algorithm_CLOSE_OPEN(strSelectedTicker);
+                    objectAnyChart.draw_CLOSE_OPEN(strSelectedAlgorithm,viewGroup,mGap);
+                    break;
+                case BUY_LOW:{
                     int day0 = 0;
                     int day1 = 1;
                     int day2 = 7;
                     int day3 = 30;
                     int day4 = 180;
 
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmBuyLow(strSelectedTicker, day0, day1, day2, day3, day4);
-                    objectAnyChart.drawAlgorithmBuyLowResult(strSelectedAlgorithm, viewGroup, resultList, day0, day1, day2, day3, day4);
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_BUY_LOW(strSelectedTicker, day0, day1, day2, day3, day4);
+                    objectAnyChart.draw_BUY_LOW(strSelectedAlgorithm, viewGroup, resultList, day0, day1, day2, day3, day4);
                 }
                     break;
-                case ALGORITHM_PRICE_DECREASE_3DAYS_CASE:{
+                case BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS:{
                     int day1 = 1;
                     int day2 = 7;
                     int day3 = 30;
@@ -219,41 +225,34 @@ public class FragmentMain extends Fragment {
 
                     int decreaseDay = 3;
 
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmVolumeAndPriceDecrease5daysCase(strSelectedTicker, day1, day2, day3, day4, decreaseDay);
-                    objectAnyChart.drawAlgorithmVolumeAndPriceDecrease5daysResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4, decreaseDay);
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS(strSelectedTicker, day1, day2, day3, day4, decreaseDay);
+                    objectAnyChart.draw_BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4, decreaseDay);
+                }
+                break;
+                case RECOVERING: {
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_RECOVERING(strSelectedTicker);
+                    objectAnyChart.draw_RECOVERING(strSelectedAlgorithm, viewGroup, resultList);
                 }
                     break;
-                case ALGORITHM_OHLC_CASE:{
-                    List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmOHLCcase(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmOHLCResult(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
+                case BUY_OPEN_SELL_CLOSE: {
+                    ArrayList<ModelTicker.Daily> dailyList = objectAlgorithm.algorithm_BUY_OPEN_SELL_CLOSE(strSelectedTicker);
+                    objectAnyChart.draw_BUY_OPEN_SELL_CLOSE(strSelectedAlgorithm, viewGroup, dailyList);
                 }
                     break;
-                case ALGORITHM_CLOSE_FLUCTUATION_CASE:{
+                case FLUCTUATION_RATE_ONE_DAY:{
+                    List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithm_FLUCTUATION_RATE_ONE_DAY(strSelectedTicker);
+                    objectAnyChart.draw_FLUCTUATION_RATE_ONE_DAY(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
+                }
+                    break;
+                case FLUCTUATION_RATE_SEVERAL_DAYS:{
                     int day1 = 1;
                     int day2 = 7;
                     int day3 = 14;
                     int day4 = 30;
 
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmCloseFluctuationRateCase(strSelectedTicker, day1, day2, day3, day4);
-                    objectAnyChart.drawAlgorithmCloseFluctuationRateResult(strSelectedAlgorithm, strSelectedTicker, viewGroup, resultList, day1, day2, day3, day4);
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_FLUCTUATION_RATE_SEVERAL_DAYS(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.draw_FLUCTUATION_RATE_SEVERAL_DAYS(strSelectedAlgorithm, strSelectedTicker, viewGroup, resultList, day1, day2, day3, day4);
                 }
-                    break;
-                case ALGORITHM_VOLUME_100PER_INCREASED_CASE:
-                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
-                    objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
-                    break;
-                case ALGORITHM_VOLUME_100PER_DECREASED_CASE:
-                    LinkedList<ArrayList<ModelTicker.Daily>> mResultList = objectAlgorithm.algorithmTest2(strSelectedTicker, day1, day2, day3, day4);
-                    objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, mResultList, day1, day2, day3, day4);
-                    break;
-
-                case ALGORITHM_MAX_MIN_AVERAGE_GAP:
-                    LinkedList<Double> mAverage = objectAlgorithm.maxAndMinAverage(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmMaxMinGapValue(strSelectedAlgorithm, viewGroup, mAverage);
-                    break;
-                case ALGORITHM_YESTERDAY_CLOSE_GAPVALUE :
-                    LinkedList<Double> mGap = objectAlgorithm.yesterdayCloseGapValue(strSelectedTicker);
-                    objectAnyChart.yesterdayCloseGapValue(strSelectedAlgorithm,viewGroup,mGap);
                     break;
                 default:
                     break;
