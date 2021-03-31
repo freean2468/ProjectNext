@@ -199,13 +199,15 @@ public class ObjectAlgorithm {
     }
     /**
      * 시나리오 3
-     * 최고가와 최저가의 평균을 내서 그래프에 보여준다.
+     * 최고가와 최저가의 평균을 내서 막대 그래프에 보여준다.
+     * 최고가 평균과 최저가의 평균값의 차이를 평균을 내어서 보여주어 투자 여부를 결정하게 한다.
      *
      */
     public LinkedList<Double> maxAndMinAverage(String name)
     {
         double maxValueAvg = 0.0;
         double minValueAvg = 0.0;
+        double avgGap = 0.0;
 
         ModelTicker ticker = getTicker(name);
 
@@ -217,14 +219,17 @@ public class ObjectAlgorithm {
         {
             maxValueAvg += dailyList.get(i).getHigh();
             minValueAvg += dailyList.get(i).getLow();
+            avgGap += maxValueAvg - minValueAvg;
         }
         maxValueAvg /= dailyList.size();
         minValueAvg /= dailyList.size();
+        avgGap /= dailyList.size();
 
         LinkedList<Double> valueList = new LinkedList<Double>();
 
         valueList.add(maxValueAvg);
         valueList.add(minValueAvg);
+        valueList.add(avgGap);
 
         return valueList;
     }

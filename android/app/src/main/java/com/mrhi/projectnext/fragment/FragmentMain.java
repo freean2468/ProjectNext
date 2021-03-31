@@ -43,7 +43,7 @@ public class FragmentMain extends Fragment {
 
     private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
     private static final int ALGORITHM_VOLUME_100PER_DECREASED_CASE = 1;
-    private static final int MAX_MIN_AVERAGE = 2;
+    private static final int ALGORITHM_MAX_MIN_AVERAGE_GAP = 2;
 
     private FragmentMain(){
 
@@ -166,9 +166,9 @@ public class FragmentMain extends Fragment {
                     objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, mResultList, day1, day2, day3, day4);
                     break;
 
-                case MAX_MIN_AVERAGE:
+                case ALGORITHM_MAX_MIN_AVERAGE_GAP:
                     LinkedList<Double> mAverage = objectAlgorithm.maxAndMinAverage(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmMaxMinValue(strSelectedAlgorithm, viewGroup, mAverage);
+                    objectAnyChart.drawAlgorithmMaxMinGapValue(strSelectedAlgorithm, viewGroup, mAverage);
                     break;
             }
         });

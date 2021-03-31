@@ -207,16 +207,18 @@ public class ObjectAnyChart {
     }
     */
 
-    public void drawAlgorithmMaxMinValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
+    public void drawAlgorithmMaxMinGapValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
     {
         double minValueAvg = 0.0;
         double maxValueAvg = 0.0;
+        double avgGap = 0.0;
         /**
          * 뷰그룹을 깨끗이 비운다.
          *
         */
         maxValueAvg = valueList.get(0);
         minValueAvg = valueList.get(1);
+        avgGap = valueList.get(2);
 
         viewGroup.removeAllViewsInLayout();
 
@@ -286,6 +288,7 @@ public class ObjectAnyChart {
         anyChartView.setChart(cartesian);
 
         TextView textView = new TextView(viewGroup.getContext());
+        textView.setText("최소값과 최대값 차이의 평균값 : " +avgGap );
         linearLayout.addView(textView);
     }
 
