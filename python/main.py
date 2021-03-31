@@ -6,8 +6,11 @@ targetUrl = [
     "https://finance.yahoo.com/quote/RIOT/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true",
     # NASDAQ
     "https://finance.yahoo.com/quote/%5EIXIC/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true",
-    # APPLE
-    "https://finance.yahoo.com/quote/AAPL/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true"
+    # APPLE - 3년치 데이터
+    "https://finance.yahoo.com/quote/AAPL/history?period1=1514764800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true"
+    
+    # APPLE - 1년치 데이터
+    # "https://finance.yahoo.com/quote/AAPL/history?period1=1577836800&period2=1609372800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true"
 ]
 
 core.crawling(targetUrl)

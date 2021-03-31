@@ -26,8 +26,9 @@ public class ObjectAlgorithm {
     public static final int ALGORITHM_BUY_OPEN_CASE = 3;
     public static final int ALGORITHM_FOURTEEN_DAYS_VOLUME_CASE = 4;
     public static final int ALGORITHM_BUY_LOW_CASE = 5;
-    public static final int ALGORITHM_VOLUNE_PRICE_DECREASE_3DAYS_CASE = 6;
+    public static final int ALGORITHM_PRICE_DECREASE_3DAYS_CASE = 6;
     public static final int ALGORITHM_OHLC_CASE = 7;
+    public static final int ALGORITHM_CLOSE_FLUCTUATION_CASE = 8;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -67,13 +68,13 @@ public class ObjectAlgorithm {
      * 전날 대비 volume이 100%이상 상승한 날 high에 매수 시
      * day1일 후 수익률, day2일 후 수익률, day3일 후 수익률, day4일 후 수익률
      *
-     * @auth 송훈일
      * @param name
      * @param day1
      * @param day2
      * @param day3
      * @param day4
      * @return
+     * @auth 송훈일
      */
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolume100PerIncreatedCase(String name, int day1, int day2, int day3, int day4) {
         /**
@@ -148,6 +149,7 @@ public class ObjectAlgorithm {
 
     /**
      * open에 매수하면 close와 비교할 때 수익을 낼 확률
+     *
      * @authour 송훈일
      */
     public ArrayList<ModelTicker.Daily> algorithmBuyOpenCase(String name) {
@@ -158,7 +160,15 @@ public class ObjectAlgorithm {
 
         return dailyList;
     }
-    
+
+    /**
+     * 14일 동안 종가의 가격상승이 이루어진 날이 8일 이상일 때,
+     * 기준일에 매수하여 14일 후에 매도할 때의 수익률
+     * @authour 허선영
+     *
+     * @param name
+     * @return
+     */
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithmFourteenDays(String name) {
         /*
             rapunzel algorithm
@@ -221,7 +231,8 @@ public class ObjectAlgorithm {
 
     /**
      * 떨어지는 주가가 다시 상한가로 전환되는데까지 걸리는 평균 일수
-     * rapunzel algorithm
+     *
+     * @author 허선영
      */
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithmSwitchPrice(String name) {
         //name: spinner에서 선택한 종목명
@@ -229,9 +240,11 @@ public class ObjectAlgorithm {
         ModelTicker ticker = getTicker(name);
 
         //떨어지기 시작하는 날 = today
-        ArrayList<ModelTicker.Daily> slidingDate = new ArrayList() {};
+        ArrayList<ModelTicker.Daily> slidingDate = new ArrayList() {
+        };
         //회복하는 날
-        ArrayList<ModelTicker.Daily> recoveredDate = new ArrayList() {};
+        ArrayList<ModelTicker.Daily> recoveredDate = new ArrayList() {
+        };
 
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
@@ -250,11 +263,11 @@ public class ObjectAlgorithm {
                     boolean flag = false;
 
                     //회복하는 날 = recoverdDate
-                    for(int j = i+1; j<dailyList.size() ; j++){
-                        if(today.getClose() <= dailyList.get(j).getClose()){
+                    for (int j = i + 1; j < dailyList.size(); j++) {
+                        if (today.getClose() <= dailyList.get(j).getClose()) {
                             recoveredDate.add(dailyList.get(j));
                             slidingDate.add(today);
-                            flag=true;
+                            flag = true;
                             break;
                         }
                     }
@@ -269,22 +282,22 @@ public class ObjectAlgorithm {
         return resultList;
     }//end of algorithmSwitchPrice
 
+    /**
+     * 14일 동안 종가의 가격과 거래량 상승이 이루어진 날이 8일 이상일 때,
+     * 기준일에 매수하여 14일 후에 매도할 때의 수익률
+     *
+     * @param name
+     * @return
+     * @author 허선영
+     */
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithmFourteenDaysVolume(String name) {
-        /*
-            rapunzel algorithm
-            14일의 기간 중, 8일 동안 가격과 거래량 상승이 이루어졌을 때 첫날 매수하여 14일 째 되는 날 매도했을 때의 수익률
-            매수가와 매도가는 그 날의 고가
-         */
-
         //현재 스피너에서 선택한 종목명으로 알고리즘을 실행
         ModelTicker ticker = getTicker(name);
 
         //매수한 날 = today
-        ArrayList<ModelTicker.Daily> buyDate = new ArrayList() {
-        };
+        ArrayList<ModelTicker.Daily> buyDate = new ArrayList() {};
         //매도한 날 = today + 14
-        ArrayList<ModelTicker.Daily> sellDate = new ArrayList() {
-        };
+        ArrayList<ModelTicker.Daily> sellDate = new ArrayList() {};
 
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
@@ -329,7 +342,19 @@ public class ObjectAlgorithm {
 
     }//end of algorithmFourteenDaysVolume
 
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmBuyLow(String name, int day, int nextDay, int oneWeek, int oneMonth, int sixMonth){
+    /**
+     * 저가로 매수 했을 시 그날, 다음날, 일주일, 한달, 6개월 후의 종가에 매도했을 때의 수익률
+     *
+     * @param name
+     * @param day0
+     * @param day1
+     * @param day2
+     * @param day3
+     * @param day4
+     * @return
+     * @author 허선영
+     */
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmBuyLow(String name, int day0, int day1, int day2, int day3, int day4) {
         /**
          * rapunzel algorithm
          * 저가에 매수 시 그날 종가, 다음날, 일주일 후, 한달 후, 6개월 후의 종가에 대한 수익률
@@ -338,8 +363,7 @@ public class ObjectAlgorithm {
         ModelTicker ticker = getTicker(name);
 
         //매수한 날 = today
-        ArrayList<ModelTicker.Daily> buyDate = new ArrayList() {
-        };
+        ArrayList<ModelTicker.Daily> buyDate = new ArrayList() {};
         //매도한 날 = today + X
         ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
         ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
@@ -368,27 +392,27 @@ public class ObjectAlgorithm {
                     ModelTicker.Daily daily5;
 
                     try {
-                        daily1 = dailyList.get(i + day);
+                        daily1 = dailyList.get(i + day0);
                     } catch (IndexOutOfBoundsException ioobe) {
                         daily1 = null;
                     }
                     try {
-                        daily2 = dailyList.get(i + nextDay);
+                        daily2 = dailyList.get(i + day1);
                     } catch (IndexOutOfBoundsException ioobe) {
                         daily2 = null;
                     }
                     try {
-                        daily3 = dailyList.get(i + oneWeek);
+                        daily3 = dailyList.get(i + day2);
                     } catch (IndexOutOfBoundsException ioobe) {
                         daily3 = null;
                     }
                     try {
-                        daily4 = dailyList.get(i + oneMonth);
+                        daily4 = dailyList.get(i + day3);
                     } catch (IndexOutOfBoundsException ioobe) {
                         daily4 = null;
                     }
                     try {
-                        daily5 = dailyList.get(i + sixMonth);
+                        daily5 = dailyList.get(i + day4);
                     } catch (IndexOutOfBoundsException ioobe) {
                         daily5 = null;
                     }
@@ -416,10 +440,12 @@ public class ObjectAlgorithm {
     /**
      * close가 decreaseDay(현재는 3일)일 연속으로 하락 후 매수 시,
      * 다음날, 일주일 후, 한달 후, 6개월 후의 close에 대한 수익률
+     *
      * @param name
      * @return
+     * @author 허선영
      */
-    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolumeAndPriceDecrease5daysCase(String name, int nextDay, int oneWeek, int oneMonth, int sixMonth, int decreaseDay){
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmVolumeAndPriceDecrease5daysCase(String name, int day1, int day2, int day3, int day4, int decreaseDay) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -446,7 +472,7 @@ public class ObjectAlgorithm {
                 if (yesterday.getClose() > today.getClose()) {
                     count++;
 
-                    if(count >= decreaseDay){
+                    if (count >= decreaseDay) {
                         buyPositions.add(today);
 
                         ModelTicker.Daily daily1;
@@ -455,22 +481,22 @@ public class ObjectAlgorithm {
                         ModelTicker.Daily daily4;
 
                         try {
-                            daily1 = dailyList.get(i + nextDay);
+                            daily1 = dailyList.get(i + day1);
                         } catch (IndexOutOfBoundsException ioobe) {
                             daily1 = null;
                         }
                         try {
-                            daily2 = dailyList.get(i + oneWeek);
+                            daily2 = dailyList.get(i + day2);
                         } catch (IndexOutOfBoundsException ioobe) {
                             daily2 = null;
                         }
                         try {
-                            daily3 = dailyList.get(i + oneMonth);
+                            daily3 = dailyList.get(i + day3);
                         } catch (IndexOutOfBoundsException ioobe) {
                             daily3 = null;
                         }
                         try {
-                            daily4 = dailyList.get(i + sixMonth);
+                            daily4 = dailyList.get(i + day4);
                         } catch (IndexOutOfBoundsException ioobe) {
                             daily4 = null;
                         }
@@ -502,10 +528,13 @@ public class ObjectAlgorithm {
 
     /**
      * open, high, low, close의 하루 변동률의 평균
+     *
      * @param name
      * @return
+     * @author 허선영
      */
-    public List<ModelTicker.Daily> algorithmOHLCcase(String name){
+    public List<ModelTicker.Daily> algorithmOHLCcase(String name)
+    {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
@@ -517,5 +546,69 @@ public class ObjectAlgorithm {
 
         return dailyList;
     }//end of algorithmOLCDCase
+
+    /**
+     * 기준일의 종가 대비 다음날, 일주일, 2주, 한달 후 종가의 변동률
+     *
+     * @author 허선영
+     */
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmCloseFluctuationRateCase(String name, int day1, int day2, int day3, int day4) {
+        /**
+         * 현재 선택된 종목으로 알고리즘 실행
+         */
+        ModelTicker ticker = getTicker(name);
+
+        //기준 날 = today
+        ArrayList<ModelTicker.Daily> standardDate = new ArrayList() {
+        };
+        //비교하는 날 = today + X
+        ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions3 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions4 = new ArrayList<>();
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
+
+        ModelTicker.Daily yesterday = null;
+
+        for (int i = 0; i < dailyList.size(); ++i) {
+            ModelTicker.Daily today = dailyList.get(i);
+            if (yesterday != null) {
+                ModelTicker.Daily daily1;
+                ModelTicker.Daily daily2;
+                ModelTicker.Daily daily3;
+                ModelTicker.Daily daily4;
+
+                try {
+                    daily4 = dailyList.get(i + day4);
+                } catch (IndexOutOfBoundsException ioobe) {
+                    break;
+                }
+
+                daily1 = dailyList.get(i + day1);
+                daily2 = dailyList.get(i + day2);
+                daily3 = dailyList.get(i + day3);
+
+                standardDate.add(today);
+                positions1.add(daily1);
+                positions2.add(daily2);
+                positions3.add(daily3);
+                positions4.add(daily4);
+            }
+            yesterday = today;
+        }
+
+        resultList.add(standardDate);
+        resultList.add(positions1);
+        resultList.add(positions2);
+        resultList.add(positions3);
+        resultList.add(positions4);
+
+        return resultList;
+    }//end of algorithmCloseFluctuationRateCase
 
 }

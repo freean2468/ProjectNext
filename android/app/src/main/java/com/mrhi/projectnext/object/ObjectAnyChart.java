@@ -49,7 +49,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class ObjectAnyChart {
     private static ObjectAnyChart instance = new ObjectAnyChart();
-    private ObjectAnyChart() {}
+
+    private ObjectAnyChart() {
+    }
+
     public static ObjectAnyChart getInstance() {
         return instance;
     }
@@ -57,10 +60,11 @@ public class ObjectAnyChart {
     private int fragmentMainViewId = 0;
     private int fragmentAlgorithmResultViewId = 0;
 
-    /** 시고저종 그래프의 기본형을 그린다.
+    /**
+     * 시고저종 그래프의 기본형을 그린다.
      * 현재 ObjectAlgorithm에 selectedTicker의 데이터가 있어야 함.
      *
-     * @param view  그래프를 담을 Layout
+     * @param view           그래프를 담을 Layout
      * @param selectedTicker
      */
     public void drawOHLCChart(ViewGroup view, String selectedTicker) {
@@ -85,11 +89,11 @@ public class ObjectAnyChart {
         ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
         ModelTicker modelTicker = objectAlgorithm.getTicker(selectedTicker);
 
-        java.util.Set<ModelTicker.Daily> tickerCopy =  modelTicker.getCopy();
+        java.util.Set<ModelTicker.Daily> tickerCopy = modelTicker.getCopy();
         Iterator<ModelTicker.Daily> iterator = tickerCopy.iterator();
         List<DataEntry> data = new ArrayList<>();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             ModelTicker.Daily daily = iterator.next();
             data.add(new OHCLDataEntry(daily.getDate().getTime(), daily.getOpen(), daily.getHigh(),
                     daily.getLow(), daily.getClose(), daily.getVolume()));
@@ -123,7 +127,8 @@ public class ObjectAnyChart {
                 .yMinorGrid(true)
                 .xMinorGrid(true)
                 .height("30%")
-                .yAxis(0).labels().format("{%Value}{scale:(1000)|(k)}");;
+                .yAxis(0).labels().format("{%Value}{scale:(1000)|(k)}");
+        ;
 
         plot2.volumeMa(mapping, 20d, MovingAverageType.EMA, StockSeriesType.COLUMN, StockSeriesType.LINE);
 
@@ -211,14 +216,14 @@ public class ObjectAnyChart {
      * 전일 대비 거래량이 100% 상승했을 때 high에서 매수한 시점에서
      * day1, day2, day3, day4 이후의 가격 평균을 도출하는 알고리즘.
      *
-     * @author 송훈일 (freean2468@gmail.com)
      * @param strSelectedAlgorithm 알고리즘 제목
-     * @param viewGroup 알고리즘 결과가 담길 Layout (FragmentAlgorithmResult 안 LinearLayout)
-     * @param resultList 알고리즘의 결과물. 이 함수 안에서 사용할 데이터 셋
+     * @param viewGroup            알고리즘 결과가 담길 Layout (FragmentAlgorithmResult 안 LinearLayout)
+     * @param resultList           알고리즘의 결과물. 이 함수 안에서 사용할 데이터 셋
      * @param day1
      * @param day2
      * @param day3
      * @param day4
+     * @author 송훈일 (freean2468@gmail.com)
      */
     public void drawAlgorithmVolumeDoubleTimedCase(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
         /**
@@ -386,23 +391,23 @@ public class ObjectAnyChart {
             linearLayout.addView(textViewOccurrence);
 
             TextView textViewEarningRateDay1 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay1.setText("매수 시점 기준 " + day1 +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay1 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay1.setText("매수 시점 기준 " + day1 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay1 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay1);
 
             TextView textViewEarningRateDay2 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay2.setText("매수 시점 기준 " + day2 +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay2 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay2.setText("매수 시점 기준 " + day2 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay2 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay2);
 
             TextView textViewEarningRateDay3 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay3.setText("매수 시점 기준 " + day3 +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay3 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay3.setText("매수 시점 기준 " + day3 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay3 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay3);
 
             TextView textViewEarningRateDay4 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay4.setText("매수 시점 기준 " + day4 +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay4 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay4.setText("매수 시점 기준 " + day4 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay4 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay4);
         }
     }
@@ -561,11 +566,14 @@ public class ObjectAnyChart {
         linearLayout.addView(textView3);
 
         TextView textView4 = new TextView(viewGroup.getContext());
-        textView4.setText("승률 : " + Helper.round((double)greaterOpenCount/size * 100, 2) + "%");
+        textView4.setText("승률 : " + Helper.round((double) greaterOpenCount / size * 100, 2) + "%");
         linearLayout.addView(textView4);
     }
 
     /**
+     * 14일 동안 종가의 가격상승이 이루어진 날이 8일 이상일 때,
+     * 기준일에 매수하여 14일 후에 매도할 때의 수익률
+     *
      * @author 허선영
      */
     public void drawAlgorithmFourteenDaysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
@@ -691,6 +699,8 @@ public class ObjectAnyChart {
     }//end of draw14days
 
     /**
+     * 떨어지는 주가가 다시 상한가로 전환되는데까지 걸리는 평균 일수
+     *
      * @author 허선영
      */
     public void drawAlgorithmSurgeDaysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList3) {
@@ -819,7 +829,7 @@ public class ObjectAnyChart {
 
             //알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화 하는 부분.
             TextView textViewOccurrence = new TextView(viewGroup.getContext());
-            textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size + "   평균 소요 시간: " + avgDate+"일");
+            textViewOccurrence.setText("알고리즘 매칭 횟수 : " + size + "   평균 소요 시간: " + avgDate + "일");
             linearLayout.addView(textViewOccurrence);
 
         }//end of if exsist resultList
@@ -827,6 +837,9 @@ public class ObjectAnyChart {
     }//end of algorithmSurgeDate
 
     /**
+     * 14일 동안 종가의 가격과 거래량 상승이 이루어진 날이 8일 이상일 때,
+     * 기준일에 매수하여 14일 후에 매도할 때의 수익률
+     *
      * @author 허선영
      */
     public void drawAlgorithmFourteenDaysVolumeResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList) {
@@ -952,12 +965,14 @@ public class ObjectAnyChart {
     }//end of draw14DaysAndVolume
 
     /**
+     * 저가로 매수 했을 시 그날, 다음날, 일주일, 한달, 6개월 후의 종가에 매도했을 때의 수익률
+     *
      * @author 허선영
      */
-    public void drawAlgorithmBuyLowResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day, int nextDay, int oneWeek, int oneMonth, int sixMonth) {
+    public void drawAlgorithmBuyLowResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day0, int day1, int day2, int day3, int day4) {
         //기존에 있던 뷰 정리
         viewGroup.removeAllViewsInLayout();
-        String name = String.valueOf(day) + " | " + String.valueOf(nextDay) + " | " + String.valueOf(oneWeek) + " | " + String.valueOf(oneMonth) + " | " + String.valueOf(sixMonth);
+        String name = String.valueOf(day0) + " | " + String.valueOf(day1) + " | " + String.valueOf(day2) + " | " + String.valueOf(day3) + " | " + String.valueOf(day4);
 
         //알고리즘에 매칭되는 부분이 없을 수 있음
         if (resultList.get(0).size() > 0) {
@@ -1052,7 +1067,7 @@ public class ObjectAnyChart {
                     avgDay2 += day2Daily.getClose();
                     avgDay1 += day1Daily.getClose();
                     avgBuy += buy.getLow();
-                }else{
+                } else {
                     count++;
                 }
             }//end of for
@@ -1066,11 +1081,11 @@ public class ObjectAnyChart {
 
             //set에 데이터를 집어 넣어 그래프를 그릴 준비
             seriesData.add(new AlgorithmDataEntry("buy", avgBuy));
-            seriesData.add(new AlgorithmDataEntry(day + "d", avgDay1));
-            seriesData.add(new AlgorithmDataEntry(nextDay + "d", avgDay2));
-            seriesData.add(new AlgorithmDataEntry(oneWeek + "d", avgDay3));
-            seriesData.add(new AlgorithmDataEntry(oneMonth + "d", avgDay4));
-            seriesData.add(new AlgorithmDataEntry(sixMonth + "d", avgDay5));
+            seriesData.add(new AlgorithmDataEntry(day0 + "d", avgDay1));
+            seriesData.add(new AlgorithmDataEntry(day1 + "d", avgDay2));
+            seriesData.add(new AlgorithmDataEntry(day2 + "d", avgDay3));
+            seriesData.add(new AlgorithmDataEntry(day3 + "d", avgDay4));
+            seriesData.add(new AlgorithmDataEntry(day4 + "d", avgDay5));
 
             set.data(seriesData);
 
@@ -1102,28 +1117,28 @@ public class ObjectAnyChart {
             linearLayout.addView(textViewOccurrence);
 
             TextView textViewEarningRateDay1 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay1.setText("매수 시점 기준 " + day +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay1 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay1.setText("매수 시점 기준 " + day0 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay1 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay1);
 
             TextView textViewEarningRateDay2 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay2.setText("매수 시점 기준 " + nextDay +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay2 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay2.setText("매수 시점 기준 " + day1 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay2 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay2);
 
             TextView textViewEarningRateDay3 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay3.setText("매수 시점 기준 " + oneWeek +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay3 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay3.setText("매수 시점 기준 " + day2 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay3 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay3);
 
             TextView textViewEarningRateDay4 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay4.setText("매수 시점 기준 " + oneMonth +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay4 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay4.setText("매수 시점 기준 " + day3 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay4 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay4);
 
             TextView textViewEarningRateDay5 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay5.setText("매수 시점 기준 " + sixMonth +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay5 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay5.setText("매수 시점 기준 " + day4 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay5 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay5);
 
         }//end of if exsist resultList
@@ -1131,14 +1146,17 @@ public class ObjectAnyChart {
     }//end of drawBuyLow
 
     /**
+     * close가 decreaseDay(현재는 3일)일 연속으로 하락 후 매수 시,
+     * 다음날, 일주일 후, 한달 후, 6개월 후의 close에 대한 수익률
+     *
      * @author 허선영
      */
-    public void drawAlgorithmVolumeAndPriceDecrease5daysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int nextDay, int oneWeek, int oneMonth, int sixMonth, int decreaseDays) {
+    public void drawAlgorithmVolumeAndPriceDecrease5daysResult(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4, int decreaseDays) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
         viewGroup.removeAllViewsInLayout();
-        String name = String.valueOf(nextDay) + " | " + String.valueOf(oneWeek) + " | " + String.valueOf(oneMonth) + " | " + String.valueOf(sixMonth);
+        String name = String.valueOf(day1) + " | " + String.valueOf(day2) + " | " + String.valueOf(day3) + " | " + String.valueOf(day4);
 
         /**
          * 알고리즘 매칭되는 부분이 없을 수도 있다.
@@ -1257,10 +1275,10 @@ public class ObjectAnyChart {
              * 셋에 데이터를 집어 넣어 그래프를 그릴 준비
              */
             seriesData.add(new AlgorithmDataEntry("buy", avgBuy));
-            seriesData.add(new AlgorithmDataEntry(nextDay + "d", avgDay1));
-            seriesData.add(new AlgorithmDataEntry(oneWeek + "d", avgDay2));
-            seriesData.add(new AlgorithmDataEntry(oneMonth + "d", avgDay3));
-            seriesData.add(new AlgorithmDataEntry(sixMonth + "d", avgDay4));
+            seriesData.add(new AlgorithmDataEntry(day1 + "d", avgDay1));
+            seriesData.add(new AlgorithmDataEntry(day2 + "d", avgDay2));
+            seriesData.add(new AlgorithmDataEntry(day3 + "d", avgDay3));
+            seriesData.add(new AlgorithmDataEntry(day4 + "d", avgDay4));
 
             set.data(seriesData);
 
@@ -1299,23 +1317,23 @@ public class ObjectAnyChart {
             linearLayout.addView(textViewOccurrence);
 
             TextView textViewEarningRateDay1 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay1.setText("매수 시점 기준 " + nextDay +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay1 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay1.setText("매수 시점 기준 " + day1 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay1 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay1);
 
             TextView textViewEarningRateDay2 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay2.setText("매수 시점 기준 " + oneWeek +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay2 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay2.setText("매수 시점 기준 " + day2 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay2 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay2);
 
             TextView textViewEarningRateDay3 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay3.setText("매수 시점 기준 " + oneMonth +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay3 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay3.setText("매수 시점 기준 " + day3 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay3 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay3);
 
             TextView textViewEarningRateDay4 = new TextView(viewGroup.getContext());
-            textViewEarningRateDay4.setText("매수 시점 기준 " + sixMonth +"일 후 평균 수익률 : " +
-                    Helper.round((avgDay4 - avgBuy)/avgBuy*100, 2) + "%");
+            textViewEarningRateDay4.setText("매수 시점 기준 " + day4 + "일 후 평균 수익률 : " +
+                    Helper.round((avgDay4 - avgBuy) / avgBuy * 100, 2) + "%");
             linearLayout.addView(textViewEarningRateDay4);
         } else {
             Log.d("debug", "no matching");
@@ -1324,6 +1342,8 @@ public class ObjectAnyChart {
     }//end of VolumeAndPriceDecrease5days
 
     /**
+     * open, high, low, close의 하루 변동률의 평균
+     *
      * @author 허선영
      */
     public void drawAlgorithmOHLCResult(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, List<ModelTicker.Daily> dailyList) {
@@ -1379,11 +1399,6 @@ public class ObjectAnyChart {
             Cartesian cartesian = AnyChart.column();
 
             List<DataEntry> seriesData = new ArrayList<>();
-
-//            final int OPEN = 0;
-//            final int HIGH = 1;
-//            final int LOW = 2;
-//            final int CLOSE = 3;
 
             double fluctuationRateOpen = 0.0;
             double fluctuationRateHigh = 0.0;
@@ -1462,6 +1477,158 @@ public class ObjectAnyChart {
         }//end of if
 
     }//end of OHLC
+
+    /**
+     * 기준일의 종가 대비 다음날, 일주일, 2주, 한달 후 종가의 변동률
+     *
+     * @author 허선영
+     *
+     * @param strSelectedAlgorithm
+     * @param strSelectedTicker
+     * @param viewGroup
+     * @param resultList     *
+     */
+    public void drawAlgorithmCloseFluctuationRateResult(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int day1, int day2, int day3, int day4) {
+        /**
+         * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
+         */
+        viewGroup.removeAllViewsInLayout();
+        String name = "open" + " | " + "high" + " | " + "low" + " | " + "close";
+
+        /**
+         * 알고리즘 매칭되는 부분이 없을 수도 있다.
+         */
+        if (resultList.size() > 0) {
+            /**
+             * 새로운 AnyChartView를 xml이 아니라 코드상에서 직접 생성하고
+             */
+            AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+            /**
+             * Layout을 설정
+             */
+            anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1));
+            anyChartView.setPadding(10, 0, 0, 0);
+
+            /**
+             * FragmentAlgorithmResult의 LinearLayout에 추가해준다.
+             */
+            viewGroup.addView(anyChartView);
+
+            /**
+             * 계산해낸 평균 결과 도출은 그래프를 통해 화면 절반에 도식하고
+             * 나머지 절반에 도출해낸 수치들을 표시하기 위해
+             * LinearLayout을 또 만들어 추가해준다.
+             */
+            LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1
+            ));
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            linearLayout.setPadding(10, 10, 10, 10);
+
+            viewGroup.addView(linearLayout);
+
+            /**
+             * AnyChart Library를 이용해서 막대 그래프를 그리는 부분
+             */
+            Cartesian cartesian = AnyChart.column();
+
+            List<DataEntry> seriesData = new ArrayList<>();
+
+            double fluctuationRateClose1 = 0.0;
+            double fluctuationRateClose2 = 0.0;
+            double fluctuationRateClose3 = 0.0;
+            double fluctuationRateClose4 = 0.0;
+
+            double totalClose1 = 0.0;
+            double totalClose2 = 0.0;
+            double totalClose3 = 0.0;
+            double totalClose4 = 0.0;
+
+            double avgClose1 = 0.0;
+            double avgClose2 = 0.0;
+            double avgClose3 = 0.0;
+            double avgClose4 = 0.0;
+
+            final int DAY0 = 0;
+            final int DAY1 = 1;
+            final int DAY2 = 2;
+            final int DAY3 = 3;
+            final int DAY4 = 4;
+
+            int size = resultList.get(DAY0).size();
+
+            //(today-yesterday)/(yesterday)*100
+            for (int i = 0; i < resultList.get(DAY0).size(); ++i) {
+                ModelTicker.Daily daily0 = resultList.get(DAY0).get(i);
+                ModelTicker.Daily daily1 = resultList.get(DAY1).get(i);
+                ModelTicker.Daily daily2 = resultList.get(DAY2).get(i);
+                ModelTicker.Daily daily3 = resultList.get(DAY3).get(i);
+                ModelTicker.Daily daily4 = resultList.get(DAY4).get(i);
+
+                fluctuationRateClose1 = (daily1.getClose() - daily0.getClose()) / daily0.getClose() * 100;
+                fluctuationRateClose2 = (daily2.getClose() - daily0.getClose()) / daily0.getClose() * 100;
+                fluctuationRateClose3 = (daily3.getClose() - daily0.getClose()) / daily0.getClose() * 100;
+                fluctuationRateClose4 = (daily4.getClose() - daily0.getClose()) / daily0.getClose() * 100;
+
+                totalClose1 += fluctuationRateClose1;
+                totalClose2 += fluctuationRateClose2;
+                totalClose3 += fluctuationRateClose3;
+                totalClose4 += fluctuationRateClose4;
+            }//end of totalFor
+
+            avgClose1 = totalClose1 / size;
+            avgClose2 = totalClose2 / size;
+            avgClose3 = totalClose3 / size;
+            avgClose4 = totalClose4 / size;
+
+            /**
+             * set에 데이터를 집어 넣어 그래프를 그릴 준비
+             */
+            seriesData.add(new AlgorithmDataEntry(String.valueOf(day1) + "d", Helper.round(avgClose1, 2)));
+            seriesData.add(new AlgorithmDataEntry(String.valueOf(day2) + "d", Helper.round(avgClose2, 2)));
+            seriesData.add(new AlgorithmDataEntry(String.valueOf(day3) + "d", Helper.round(avgClose3, 2)));
+            seriesData.add(new AlgorithmDataEntry(String.valueOf(day4) + "d", Helper.round(avgClose4, 2)));
+
+            Column column = cartesian.column(seriesData); //데이터 자리
+
+            column.tooltip()
+                    .title(strSelectedTicker)
+                    .titleFormat("{%X}")
+                    .position(Position.CENTER_BOTTOM)
+                    .anchor(Anchor.CENTER_BOTTOM)
+                    .offsetX(0d)
+                    .offsetY(5d)
+                    .format("{%Value}{groupsSeparator: }%");
+
+            cartesian.animation(false);
+
+            cartesian.title(strSelectedAlgorithm);
+
+            cartesian.padding(10d, 20d, 5d, 20d);
+
+            cartesian.yAxis(0).labels().format("{%Value}{groupsSeparator: }%");
+
+            cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+            cartesian.interactivity().hoverMode(HoverMode.BY_X);
+
+            cartesian.yAxis(0).title("price");
+            cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+            anyChartView.setChart(cartesian);
+
+            //알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화 하는 부분.
+            TextView textViewOccurrence = new TextView(viewGroup.getContext());
+            textViewOccurrence.setText("알고리즘 매칭 횟수 : " + resultList.get(DAY0).size());
+            linearLayout.addView(textViewOccurrence);
+        }//end of if
+
+    }//end of CloseFluctuationRate
 
     /**
      * 시고저종 그래프를 그리는데 필요한 데이터 셋
