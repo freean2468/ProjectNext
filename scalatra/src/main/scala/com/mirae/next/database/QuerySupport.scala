@@ -22,6 +22,13 @@ trait QuerySupport {
   def insert(daily: Daily) = db.run(dailies += daily)
   def insert(ticker: Ticker) = db.run(tickers += ticker)
 
+  def insertDailyList(dailyList: List[Daily]) = {
+    val action = DBIO.seq(
+      dailies ++= dailyList
+    )
+    db.run(action)
+  }
+
   def insertDaily(daily: Daily) = {
     val prom=Promise[ActionResult]()
     insert(daily) onComplete {

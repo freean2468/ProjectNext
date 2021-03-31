@@ -2,9 +2,9 @@ package com.mirae.next
 
 import com.mirae.next.database.QuerySupport
 import com.mirae.next.database.Tables.{Daily, Ticker}
-import org.json4s
-import org.json4s.JsonAST.JObject
-import org.json4s.{DefaultFormats, Formats}
+import org.json4s.JsonAST.{JArray, JString}
+import org.json4s.jackson.Serialization
+import org.json4s.{DefaultFormats, Formats, JObject, JValue, ShortTypeHints}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
 import org.scalatra.servlet.{FileUploadSupport, MultipartConfig}
@@ -99,23 +99,27 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
 
     new AsyncResult { override val is =
       Future {
-//        val list = for {
-//          jvalue <- parse(request.body)
-//        } jvalue.ex
-//
-//        for (obj <- list) {
-//
-//        }
+        def t(js: JValue) = {
+          val d = for {
+            JString(name) <- js \ "ticker"
+            JString(date) <- js \ "date"
+            JString(open) <- js \ "open"
+            JString(high) <- js \ "high"
+            JString(low) <- js \ "low"
+            JString(close) <- js \ "close"
+            JString(volume) <- js \ "volume"
+          } yield Daily(name, date, open.toDouble, high.toDouble, low.toDouble, close.toDouble, volume.toLong)
+          d.head
+        }
 
-//        val ticker = params.getOrElse("ticker", "")
-//        val date = params.getOrElse("date", "")
-//        val open = params.getOrElse("open", "").toDouble
-//        val high = params.getOrElse("high", "").toDouble
-//        val low = params.getOrElse("low", "").toDouble
-//        val close = params.getOrElse("close", "").toDouble
-//        val volume = params.getOrElse("volume", "").toLong
-//
-//        insertDaily(Daily(ticker, date, open, high, low, close, volume))
+        val list = {
+          val l = for {
+            JArray(xs) <- parse(request.body)
+          } yield xs map t
+          l.head
+        }
+
+        insertDailyList(list)
       }
     }
   }
@@ -143,7 +147,8 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
 //    case e: NoSuchElementException => e.printStackTrace()
 //    case e: NumberFormatException => e.printStackTrace()
     case e: SQLIntegrityConstraintViolationException => {
-      e.printStackTrace()
+      val logger = LoggerFactory.getLogger(getClass)
+      logger.debug(e.getMessage())
       <p>constraint violation!</p>
     }
     case e: Exception => {
