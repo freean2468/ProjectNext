@@ -23,7 +23,8 @@ def crawling (targetUrlList):
         last_height = 0
         new_height = 0
 
-        for i in range(1, 5):
+        #1년치는 for문 5번만 돌려도 됨
+        for i in range(1, 11):
             # 스크롤 높이에 3000만큼 더 가져옴
             new_height += 3000
 
@@ -55,9 +56,6 @@ def crawling (targetUrlList):
         i = 0
         while 1 :
             i = i + 1
-
-            if i == 3:
-                break
 
             print(i)
 
@@ -133,16 +131,26 @@ def crawling (targetUrlList):
             # r = requests.post(requestUrl)
             # print(r.text)
 
+            route = "daily/1?"
+            params = {'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
+                      'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""),
+                      'close': close.get_text().replace(",", ""),
+                      'volume': volume.get_text().replace(",", "")}
+            requestUrl = localhost + route + urllib.parse.urlencode(params)
+            # print(mysqlDateForm)
+            # print(requestUrl)
+            r = requests.post(requestUrl)
+
             beforeDate = date.get_text()
 
-            jsonArray.append({'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
-                      'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
-                      'volume': volume.get_text().replace(",", "")
-            })
+            # jsonArray.append({'ticker': ticker, 'date': mysqlDateForm, 'open': open.get_text().replace(",", ""),
+            #           'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
+            #           'volume': volume.get_text().replace(",", "")
+            # })
 
 
-        print("hi!!")
-        route = "dailies"
-        requestUrl = localhost + route
-        r = requests.post(requestUrl, json=jsonArray)
-        print(r.text)
+        # print("hi!!")
+        # route = "dailies"
+        # # requestUrl = localhost + route
+        # # r = requests.post(requestUrl, json=jsonArray)
+        # print(r.text)

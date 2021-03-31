@@ -25,3 +25,5 @@ create table if not exists daily_table(
 select * from ticker_table;
 select * from daily_table;
 select count(*) from daily_table;
+
+select count(*) from daily_table where ticker="AAPl";
