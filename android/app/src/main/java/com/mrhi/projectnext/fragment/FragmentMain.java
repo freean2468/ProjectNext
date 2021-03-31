@@ -44,6 +44,7 @@ public class FragmentMain extends Fragment {
     private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
     private static final int ALGORITHM_VOLUME_100PER_DECREASED_CASE = 1;
     private static final int ALGORITHM_MAX_MIN_AVERAGE_GAP = 2;
+    private static final int ALGORITHM_YESTERDAY_CLOSE_GAPVALUE = 3;
 
     private FragmentMain(){
 
@@ -169,6 +170,10 @@ public class FragmentMain extends Fragment {
                 case ALGORITHM_MAX_MIN_AVERAGE_GAP:
                     LinkedList<Double> mAverage = objectAlgorithm.maxAndMinAverage(strSelectedTicker);
                     objectAnyChart.drawAlgorithmMaxMinGapValue(strSelectedAlgorithm, viewGroup, mAverage);
+                    break;
+                case ALGORITHM_YESTERDAY_CLOSE_GAPVALUE :
+                    LinkedList<Double> mGap = objectAlgorithm.yesterdayCloseGapValue(strSelectedTicker);
+                    objectAnyChart.yesterdayCloseGapValue(strSelectedAlgorithm,viewGroup,mGap);
                     break;
             }
         });

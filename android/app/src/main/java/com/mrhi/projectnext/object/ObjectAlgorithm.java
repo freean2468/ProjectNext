@@ -233,4 +233,38 @@ public class ObjectAlgorithm {
 
         return valueList;
     }
+    //
+
+    public LinkedList<Double> yesterdayCloseGapValue(String name)
+    {
+        //Pooh Algorithm
+        double yesterdayCloseValue = 0.0;
+        double openValue = 0.0;
+        double gapValue = 0.0;
+        ModelTicker ticker = getTicker(name);
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        ModelTicker.Daily yesterday = null;
+        ModelTicker.Daily today = null;
+
+        LinkedList<Double> gapList = new LinkedList<Double>();
+
+        for(int i = 0 ; i < dailyList.size(); ++i)
+        {
+            today = dailyList.get(i);
+            if(yesterday!=null)
+            {
+                yesterdayCloseValue = yesterday.getClose();
+                openValue = today.getOpen();
+
+                gapValue = yesterdayCloseValue - openValue;
+                gapList.add(gapValue);
+            }
+            yesterday = today;
+        }
+        return gapList;
+    }
 }
