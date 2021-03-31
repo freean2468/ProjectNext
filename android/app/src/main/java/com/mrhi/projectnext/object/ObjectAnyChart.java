@@ -212,6 +212,173 @@ public class ObjectAnyChart {
     }
     */
 
+    public void drawAlgorithmMaxMinGapValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
+    {
+        //Pooh algorithm
+        double minValueAvg = 0.0;
+        double maxValueAvg = 0.0;
+        double avgGap = 0.0;
+
+        maxValueAvg = valueList.get(0);
+        minValueAvg = valueList.get(1);
+        avgGap = valueList.get(2);
+        /**
+         * 뷰그룹을 깨끗이 비운다.
+         *
+         */
+        viewGroup.removeAllViewsInLayout();
+
+        /**
+         * 애니차트 라이브러리에 있는 애니 차트 뷰를 불러온다
+        */
+        AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+
+        /**
+         * 애니 차트 뷰를 리니어 레이아웃을 새로 생성하여 위치시킨다
+         * 내부 여백을 왼쪽에만 10을 주었다.
+         * 레이아웃 세팅뒤 뷰를 추가하였다.
+        */
+        anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+        anyChartView.setPadding(10, 0, 0, 0);
+
+        viewGroup.addView(anyChartView);
+
+        LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        ));
+
+        linearLayout.setPadding(10,10,10,10);
+
+        viewGroup.addView(linearLayout);
+
+
+        Cartesian cartesian = AnyChart.column();
+
+        List<DataEntry>data = new ArrayList<>();
+        data.add(new ValueDataEntry("최대값 평균",maxValueAvg));
+        data.add(new ValueDataEntry("최소값 평균",minValueAvg));
+
+        Column column = cartesian.column(data);
+
+        column.tooltip()
+                .titleFormat("{%x}")
+                .position(Position.CENTER_BOTTOM)
+                .anchor(Anchor.CENTER_BOTTOM)
+                .offsetX(0d)
+                .offsetY(5d)
+                .format("${%Value}{groupSeparator : }");
+
+        cartesian.animation(false);
+        cartesian.title("최소값과 최대값 평균");
+
+        cartesian.yScale().minimum(0d);
+
+        cartesian.yAxis(0).labels().format("${%Value}{groupsSeparator: }");
+
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+        cartesian.interactivity().hoverMode(HoverMode.BY_X);
+
+        cartesian.xAxis(0).title("최대값 평균");
+        cartesian.yAxis(0).title("최소값 평균");
+
+        anyChartView.setChart(cartesian);
+
+        TextView textView = new TextView(viewGroup.getContext());
+        textView.setText("최소값과 최대값 차이의 평균값 : " +avgGap );
+        linearLayout.addView(textView);
+    }
+
+    public void yesterdayCloseGapValue(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> gapList)
+    {
+        viewGroup.removeAllViewsInLayout();
+
+        /**
+         * 애니차트 라이브러리에 있는 애니 차트 뷰를 불러온다
+         */
+        AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+
+        /**
+         * 애니 차트 뷰를 리니어 레이아웃을 새로 생성하여 위치시킨다
+         * 내부 여백을 왼쪽에만 10을 주었다.
+         * 레이아웃 세팅뒤 뷰를 추가하였다.
+         */
+        anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+        anyChartView.setPadding(10, 0, 0, 0);
+
+        viewGroup.addView(anyChartView);
+
+        LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        ));
+
+        linearLayout.setPadding(10,10,10,10);
+
+        viewGroup.addView(linearLayout);
+
+        Cartesian cartesian = AnyChart.column();
+        List<DataEntry>data = new ArrayList<>();
+
+        double avg = 0.0;
+
+        for (int i = 0; i < gapList.size(); ++i) {
+            avg += gapList.get(i);
+        }
+
+        avg /= gapList.size();
+
+        data.add(new ValueDataEntry("차이 평균", avg));
+
+        Column column = cartesian.column(data);
+
+        column.tooltip()
+                .titleFormat("{%x}")
+                .position(Position.CENTER_BOTTOM)
+                .anchor(Anchor.CENTER_BOTTOM)
+                .offsetX(0d)
+                .offsetY(5d)
+                .format("${%Value}{groupSeparator : }");
+
+        cartesian.animation(false);
+        cartesian.title("어제 닫힐때와 오늘 열릴때의 가격 비교");
+
+        cartesian.yScale().minimum(0d);
+
+        cartesian.yAxis(0).labels().format("${%Value}{groupsSeparator: }");
+
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+        cartesian.interactivity().hoverMode(HoverMode.BY_X);
+
+        cartesian.xAxis(0).title("최대값 평균");
+        cartesian.yAxis(0).title("최소값 평균");
+
+        anyChartView.setChart(cartesian);
+
+        TextView textView = new TextView(viewGroup.getContext());
+        textView.setText("장이 닫힐떄 가격과 열릴때 시가와의 차이를 구한다");
+        linearLayout.addView(textView);
+        TextView textView2 = new TextView(viewGroup.getContext());
+        textView2.setText("알고리즘 매칭 횟수 : " + gapList.size());
+        linearLayout.addView(textView2);
+    }
+
+
+
+
+
+
+
     /**
      * 전일 대비 거래량이 100% 상승했을 때 high에서 매수한 시점에서
      * day1, day2, day3, day4 이후의 가격 평균을 도출하는 알고리즘.

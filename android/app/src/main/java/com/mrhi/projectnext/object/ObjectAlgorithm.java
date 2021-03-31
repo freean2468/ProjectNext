@@ -60,7 +60,6 @@ public class ObjectAlgorithm {
                 return modelTicker;
             }
         }
-
         return null;
     }
 
@@ -127,17 +126,88 @@ public class ObjectAlgorithm {
                     } catch (IndexOutOfBoundsException ioobe) {
                         daily4 = null;
                     }
-
                     positions1.add(daily1);
                     positions2.add(daily2);
                     positions3.add(daily3);
                     positions4.add(daily4);
                 }
             }
-
             yesterday = today;
         }
+        resultList.add(buyPositions);
+        resultList.add(positions1);
+        resultList.add(positions2);
+        resultList.add(positions3);
+        resultList.add(positions4);
 
+        return resultList;
+    }
+
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithmTest2(String name, int day1, int day2, int day3, int day4) {
+        /**
+         * 현재 선택된 종목으로 알고리즘 실행
+         */
+        ModelTicker ticker = getTicker(name);
+
+        /**
+         * 시나리오 2
+         * 전날 대비 volume이 100%이상 하락한 날 Low에 매수 시
+         * 다음 날 수익률, 7일 후 수익률, 30일 후 수익률, 180일 후 수익률
+         */
+
+        ArrayList<ModelTicker.Daily> buyPositions = new ArrayList(){};
+        ArrayList<ModelTicker.Daily> positions1 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions3 = new ArrayList<>();
+        ArrayList<ModelTicker.Daily> positions4 = new ArrayList<>();
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
+
+        ModelTicker.Daily yesterday = null;
+
+        for (int i = 0; i < dailyList.size(); ++i) {
+            ModelTicker.Daily today = dailyList.get(i);
+            if (yesterday != null) {
+                if (yesterday.getVolume() / 2 > today.getVolume()) {
+                    buyPositions.add(today);
+
+                    ModelTicker.Daily daily1;
+                    ModelTicker.Daily daily2;
+                    ModelTicker.Daily daily3;
+                    ModelTicker.Daily daily4;
+
+                    try {
+                        daily1 = dailyList.get(i + day1);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily1 = null;
+                    }
+                    try {
+                        daily2 = dailyList.get(i + day2);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily2 = null;
+                    }
+                    try {
+                        daily3 = dailyList.get(i + day3);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily3 = null;
+                    }
+                    try {
+                        daily4 = dailyList.get(i + day4);
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        daily4 = null;
+                    }
+                    positions1.add(daily1);
+                    positions2.add(daily2);
+                    positions3.add(daily3);
+                    positions4.add(daily4);
+                }
+            }
+            yesterday = today;
+        }
         resultList.add(buyPositions);
         resultList.add(positions1);
         resultList.add(positions2);
@@ -341,6 +411,77 @@ public class ObjectAlgorithm {
         return resultList;
 
     }//end of algorithmFourteenDaysVolume
+
+    /**
+     * 시나리오 3
+     * 최고가와 최저가의 평균을 내서 막대 그래프에 보여준다.
+     * 최고가 평균과 최저가의 평균값의 차이를 평균을 내어서 보여주어 투자 여부를 결정하게 한다.
+     *
+     */
+    public LinkedList<Double> maxAndMinAverage(String name)
+    {
+        double maxValueAvg = 0.0;
+        double minValueAvg = 0.0;
+        double avgGap = 0.0;
+
+        ModelTicker ticker = getTicker(name);
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        for(int i = 0 ; i < dailyList.size(); i++)
+        {
+            maxValueAvg += dailyList.get(i).getHigh();
+            minValueAvg += dailyList.get(i).getLow();
+            avgGap += maxValueAvg - minValueAvg;
+        }
+        maxValueAvg /= dailyList.size();
+        minValueAvg /= dailyList.size();
+        avgGap /= dailyList.size();
+
+        LinkedList<Double> valueList = new LinkedList<Double>();
+
+        valueList.add(maxValueAvg);
+        valueList.add(minValueAvg);
+        valueList.add(avgGap);
+
+        return valueList;
+    }
+    //
+
+    public LinkedList<Double> yesterdayCloseGapValue(String name)
+    {
+        //Pooh Algorithm
+        double yesterdayCloseValue = 0.0;
+        double openValue = 0.0;
+        double gapValue = 0.0;
+        ModelTicker ticker = getTicker(name);
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        ModelTicker.Daily yesterday = null;
+        ModelTicker.Daily today = null;
+
+        LinkedList<Double> gapList = new LinkedList<Double>();
+
+        for(int i = 0 ; i < dailyList.size(); ++i)
+        {
+            today = dailyList.get(i);
+            if(yesterday!=null)
+            {
+                yesterdayCloseValue = yesterday.getClose();
+                openValue = today.getOpen();
+
+                gapValue = yesterdayCloseValue - openValue;
+                gapList.add(gapValue);
+            }
+            yesterday = today;
+        }
+        return gapList;
+    }
 
     /**
      * 저가로 매수 했을 시 그날, 다음날, 일주일, 한달, 6개월 후의 종가에 매도했을 때의 수익률
@@ -612,3 +753,4 @@ public class ObjectAlgorithm {
     }//end of algorithmCloseFluctuationRateCase
 
 }
+

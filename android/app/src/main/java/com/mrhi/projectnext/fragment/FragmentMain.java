@@ -52,7 +52,12 @@ public class FragmentMain extends Fragment {
     private int nSelectedAlgorithm;
     private String strSelectedAlgorithm;
 
-    private FragmentMain() {
+    private static final int ALGORITHM_VOLUME_100PER_INCREASED_CASE = 0;
+    private static final int ALGORITHM_VOLUME_100PER_DECREASED_CASE = 1;
+    private static final int ALGORITHM_MAX_MIN_AVERAGE_GAP = 2;
+    private static final int ALGORITHM_YESTERDAY_CLOSE_GAPVALUE = 3;
+
+    private FragmentMain(){
 
     }
 
@@ -157,8 +162,8 @@ public class FragmentMain extends Fragment {
         /**
          * 알고리즘 선택
          */
-        buttonExecute.setOnClickListener(v -> {
-            ((ActivityMain) getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
+        buttonExecute.setOnClickListener(v->{
+            ((ActivityMain)getActivity()).getViewPager2().setCurrentItem(ActivityMain.PAGE_ALGORITHM_RESULT);
 
             ObjectAnyChart objectAnyChart = ObjectAnyChart.getInstance();
             ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
@@ -217,12 +222,12 @@ public class FragmentMain extends Fragment {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmVolumeAndPriceDecrease5daysCase(strSelectedTicker, day1, day2, day3, day4, decreaseDay);
                     objectAnyChart.drawAlgorithmVolumeAndPriceDecrease5daysResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4, decreaseDay);
                 }
-                break;
+                    break;
                 case ALGORITHM_OHLC_CASE:{
                     List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmOHLCcase(strSelectedTicker);
                     objectAnyChart.drawAlgorithmOHLCResult(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
                 }
-                break;
+                    break;
                 case ALGORITHM_CLOSE_FLUCTUATION_CASE:{
                     int day1 = 1;
                     int day2 = 7;
@@ -232,7 +237,26 @@ public class FragmentMain extends Fragment {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmCloseFluctuationRateCase(strSelectedTicker, day1, day2, day3, day4);
                     objectAnyChart.drawAlgorithmCloseFluctuationRateResult(strSelectedAlgorithm, strSelectedTicker, viewGroup, resultList, day1, day2, day3, day4);
                 }
-                break;
+                    break;
+                case ALGORITHM_VOLUME_100PER_INCREASED_CASE:
+                    LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithmTest(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4);
+                    break;
+                case ALGORITHM_VOLUME_100PER_DECREASED_CASE:
+                    LinkedList<ArrayList<ModelTicker.Daily>> mResultList = objectAlgorithm.algorithmTest2(strSelectedTicker, day1, day2, day3, day4);
+                    objectAnyChart.drawAlgorithmTestResult(strSelectedAlgorithm, viewGroup, mResultList, day1, day2, day3, day4);
+                    break;
+
+                case ALGORITHM_MAX_MIN_AVERAGE_GAP:
+                    LinkedList<Double> mAverage = objectAlgorithm.maxAndMinAverage(strSelectedTicker);
+                    objectAnyChart.drawAlgorithmMaxMinGapValue(strSelectedAlgorithm, viewGroup, mAverage);
+                    break;
+                case ALGORITHM_YESTERDAY_CLOSE_GAPVALUE :
+                    LinkedList<Double> mGap = objectAlgorithm.yesterdayCloseGapValue(strSelectedTicker);
+                    objectAnyChart.yesterdayCloseGapValue(strSelectedAlgorithm,viewGroup,mGap);
+                    break;
+                default:
+                    break;
             }
         });
 
