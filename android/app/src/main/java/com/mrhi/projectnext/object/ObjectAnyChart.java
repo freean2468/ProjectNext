@@ -1326,7 +1326,7 @@ public class ObjectAnyChart {
     /**
      * @author 허선영
      */
-    public void drawAlgorithmOHLCResult(String strSelectedAlgorithm, ViewGroup viewGroup, List<ModelTicker.Daily> dailyList) {
+    public void drawAlgorithmOHLCResult(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, List<ModelTicker.Daily> dailyList) {
         /**
          * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
          */
@@ -1380,10 +1380,10 @@ public class ObjectAnyChart {
 
             List<DataEntry> seriesData = new ArrayList<>();
 
-            final int OPEN = 0;
-            final int HIGH = 1;
-            final int LOW = 2;
-            final int CLOSE = 3;
+//            final int OPEN = 0;
+//            final int HIGH = 1;
+//            final int LOW = 2;
+//            final int CLOSE = 3;
 
             double fluctuationRateOpen = 0.0;
             double fluctuationRateHigh = 0.0;
@@ -1401,21 +1401,17 @@ public class ObjectAnyChart {
             for (int i = 0; i < dailyList.size(); ++i) {
                 ModelTicker.Daily today = dailyList.get(i);
                 if (yesterday != null) {
-                    ModelTicker.Daily daily = dailyList.get(i);
+                    fluctuationRateOpen = (today.getOpen() - yesterday.getOpen()) / yesterday.getOpen() * 100;
+                    fluctuationRateHigh = (today.getHigh() - yesterday.getHigh()) / yesterday.getHigh() * 100;
+                    fluctuationRateLow = (today.getLow() - yesterday.getLow()) / yesterday.getLow() * 100;
+                    fluctuationRateClose = (today.getClose() - yesterday.getClose()) / yesterday.getClose() * 100;
 
-                    if (daily != null) {
-                        fluctuationRateOpen = (today.getOpen() - yesterday.getOpen()) / yesterday.getOpen() * 100;
-                        fluctuationRateHigh = (today.getHigh() - yesterday.getHigh()) / yesterday.getHigh() * 100;
-                        fluctuationRateLow = (today.getLow() - yesterday.getLow()) / yesterday.getLow() * 100;
-                        fluctuationRateClose = (today.getClose() - yesterday.getClose()) / yesterday.getClose() * 100;
-
-                        avgOpen += fluctuationRateOpen;
-                        avgHigh += fluctuationRateHigh;
-                        avgLow += fluctuationRateLow;
-                        avgClose += fluctuationRateClose;
-                    }
-
+                    avgOpen += fluctuationRateOpen;
+                    avgHigh += fluctuationRateHigh;
+                    avgLow += fluctuationRateLow;
+                    avgClose += fluctuationRateClose;
                 }//end of yesterday
+                yesterday = today;
             }//end of totalFor
 
             avgOpen /= size;
@@ -1424,14 +1420,15 @@ public class ObjectAnyChart {
             avgClose /= size;
 
             //set에 데이터를 집어 넣어 그래프를 그릴 준비
-            seriesData.add(new AlgorithmDataEntry("open", avgOpen));
-            seriesData.add(new AlgorithmDataEntry("high", avgHigh));
-            seriesData.add(new AlgorithmDataEntry("low", avgLow));
-            seriesData.add(new AlgorithmDataEntry("close", avgClose));
+            seriesData.add(new AlgorithmDataEntry("open", Helper.round(avgOpen, 2)));
+            seriesData.add(new AlgorithmDataEntry("high", Helper.round(avgHigh, 2)));
+            seriesData.add(new AlgorithmDataEntry("low", Helper.round(avgLow, 2)));
+            seriesData.add(new AlgorithmDataEntry("close", Helper.round(avgClose, 2)));
 
             Column column = cartesian.column(seriesData); //데이터 자리
 
             column.tooltip()
+                    .title(strSelectedTicker)
                     .titleFormat("{%X}")
                     .position(Position.CENTER_BOTTOM)
                     .anchor(Anchor.CENTER_BOTTOM)

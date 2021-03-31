@@ -220,7 +220,7 @@ public class FragmentMain extends Fragment {
                 break;
                 case ALGORITHM_OHLC_CASE:{
                     List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithmOHLCcase(strSelectedTicker);
-                    objectAnyChart.drawAlgorithmOHLCResult(strSelectedAlgorithm, viewGroup, dailyList);
+                    objectAnyChart.drawAlgorithmOHLCResult(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
                 }
                 break;
             }
