@@ -12,7 +12,7 @@ SCROLL_PAUSE_SEC = 0.2
 
 def crawling (targetUrlList):
     # selenium에서 사용할 웹 드라이버 상대 경로 정보
-    driverChrome = './chromedriver'
+    driverChrome = './chromedriver_win'
     # selenium의 webdriver에 앞서 설지한 chromediriver를 연동
     driver = webdriver.Chrome(driverChrome)
 

@@ -32,6 +32,7 @@ public class ObjectAlgorithm {
     public static final int BUY_OPEN_SELL_CLOSE = RECOVERING + 1;
     public static final int FLUCTUATION_RATE_ONE_DAY = BUY_OPEN_SELL_CLOSE + 1;
     public static final int FLUCTUATION_RATE_SEVERAL_DAYS = FLUCTUATION_RATE_ONE_DAY + 1;
+    public static final int PROBABILITY_CONTINUITY_2DAYS_LOSE = FLUCTUATION_RATE_SEVERAL_DAYS + 1;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -752,6 +753,59 @@ public class ObjectAlgorithm {
 
         return resultList;
     }//end of algorithm_FLUCTUATION_RATE_SEVERAL_DAYS
+
+    /**
+     *  전날 대비 종가가 이틀 연속 하락했을 때, 3일째에 상승할 확률
+     *
+     * @author 허선영
+     */
+    public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_PROBABILITY_CONTINUITY_2DAYS_LOSE(String name, int CELL_DATE) {
+        /**
+         * 현재 선택된 종목으로 알고리즘 실행
+         */
+        ModelTicker ticker = getTicker(name);
+
+        //이틀 연속 하락
+        ArrayList<ModelTicker.Daily> sliding2Days = new ArrayList() {};
+
+        //3일 이상으로 연속 하락
+        ArrayList<ModelTicker.Daily> sliding3DaysOrMore = new ArrayList() {};
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
+
+        ModelTicker.Daily yesterday = null;
+
+        int count = 0;
+        for (int i = 0; i < dailyList.size(); ++i) {
+            ModelTicker.Daily today = dailyList.get(i);
+            if (yesterday != null) {
+
+                if (yesterday.getClose() > today.getClose()) {
+                    count ++;
+
+                    if(count > CELL_DATE) {
+                        sliding3DaysOrMore.add(today);
+                    }else if(count == CELL_DATE){
+                        sliding2Days.add(today);
+                    }
+
+                }else{
+                    count = 0;
+                }
+            }//end of if not null yesterday
+            yesterday = today;
+        }//end of for OneYear
+
+        resultList.add(sliding2Days);
+        resultList.add(sliding3DaysOrMore);
+
+        return resultList;
+
+    }//end of algorithm_PROBABILITY_CONTINUITY_2DAYS_LOSE
 
 }
 

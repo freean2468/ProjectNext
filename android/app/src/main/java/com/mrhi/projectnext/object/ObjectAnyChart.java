@@ -1792,6 +1792,110 @@ public class ObjectAnyChart {
     }//end of CloseFluctuationRate
 
     /**
+     * 전날 대비 종가가 이틀 연속 하락했을 때, 3일째에 상승할 확률
+     *
+     * @author 허선영
+     *
+     * @param strSelectedAlgorithm
+     * @param strSelectedTicker
+     * @param viewGroup
+     */
+    public void draw_PROBABILITY_CONTINUITY_2DAYS_LOSE(String strSelectedAlgorithm, String strSelectedTicker, ViewGroup viewGroup, LinkedList<ArrayList<ModelTicker.Daily>> resultList, int CELL_DATE) {
+        /**
+         * 기존에 있던 view들을 모두 정리하고 새하얀 도화지로 만든다.
+         */
+        viewGroup.removeAllViewsInLayout();
+        String name = "2일 연속 종가 하락 후, 3일째에 상승할 확률";
+
+        /**
+         * 새로운 AnyChartView를 xml이 아니라 코드상에서 직접 생성하고
+         */
+        AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+        /**
+         * Layout을 설정
+         */
+        anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+        anyChartView.setPadding(10, 0, 0, 0);
+
+        /**
+         * FragmentAlgorithmResult의 LinearLayout에 추가해준다.
+         */
+        viewGroup.addView(anyChartView);
+
+        /**
+         * 계산해낸 평균 결과 도출은 그래프를 통해 화면 절반에 도식하고
+         * 나머지 절반에 도출해낸 수치들을 표시하기 위해
+         * LinearLayout을 또 만들어 추가해준다.
+         */
+        LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1
+        ));
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(10, 10, 10, 10);
+
+        viewGroup.addView(linearLayout);
+
+        /**
+         * AnyChart Library를 이용해서 막대 그래프를 그리는 부분
+         */
+        Cartesian cartesian = AnyChart.column();
+
+        List<DataEntry> seriesData = new ArrayList<>();
+
+        final int TWO_DAY = 0;
+        final int THREE_DAYS_OR_MORE = 1;
+
+        int twoDaySize = resultList.get(TWO_DAY).size();
+        int threeDaySize = resultList.get(THREE_DAYS_OR_MORE).size();
+
+        double increaseProbility = (double)twoDaySize / ( (double)twoDaySize + (double)threeDaySize ) * 100;
+
+        /**
+         * set에 데이터를 집어 넣어 그래프를 그릴 준비
+         */
+        seriesData.add(new AlgorithmDataEntry("day", Helper.round(increaseProbility, 2)));
+
+        Column column = cartesian.column(seriesData); //데이터 자리
+
+        column.tooltip()
+                .title(strSelectedTicker)
+                .titleFormat("{%X}")
+                .position(Position.CENTER_BOTTOM)
+                .anchor(Anchor.CENTER_BOTTOM)
+                .offsetX(0d)
+                .offsetY(5d)
+                .format("{%Value}{groupsSeparator: }%");
+
+        cartesian.animation(false);
+
+        cartesian.title(strSelectedAlgorithm);
+
+        cartesian.padding(10d, 20d, 5d, 20d);
+
+        cartesian.yAxis(0).labels().format("{%Value}{groupsSeparator: }%");
+
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+        cartesian.interactivity().hoverMode(HoverMode.BY_X);
+
+        cartesian.yAxis(0).title("probility");
+        cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+        anyChartView.setChart(cartesian);
+
+        //알고리즘 계산 결과를 이제 직접 필요한 view를 만들고 세팅해 도식화 하는 부분
+        TextView textViewOccurrence = new TextView(viewGroup.getContext());
+        textViewOccurrence.setText("알고리즘 매칭 횟수 : " + resultList.get(TWO_DAY).size());
+        linearLayout.addView(textViewOccurrence);
+
+    }//end of probabilityContinuity2daysLose
+
+    /**
      * 시고저종 그래프를 그리는데 필요한 데이터 셋
      */
     private class OHCLDataEntry extends HighLowDataEntry {
