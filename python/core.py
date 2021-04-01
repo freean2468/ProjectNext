@@ -40,33 +40,27 @@ def crawling (targetUrlList):
 
             time.sleep(SCROLL_PAUSE_SEC)
 
-        html = driver.page_source
-        soup = BeautifulSoup(html, 'html.parser')
-
-        ticker = soup.select_one('#quote-header-info > div.Mt\(15px\) > div.D\(ib\).Mt\(-5px\).Mend\(20px\).Maw\(56\%\)--tab768.Maw\(52\%\).Ov\(h\).smartphone_Maw\(85\%\).smartphone_Mend\(0px\) > div.D\(ib\) > h1')
-        ticker = ticker.get_text()
-        ticker = ticker.split(')')[-2].split('(')[-1]
-
-        beforeDate = soup.select_one(
-                '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child(2) > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span').get_text()
-
-        jsonArray = []
-
-        if crawlingLoopImpl(jsonArray) is True:
-            route = "dailies"
-            requestUrl = localhost + route
-            r = requests.post(requestUrl, json=jsonArray)
-            # print(r.text)
+        crawlingLoopImpl(driver)
 
 
 
-def crawlingLoopImpl(jsonArray):
+def crawlingLoopImpl(driver):
     i = 0
+
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+
+    ticker = soup.select_one(
+        '#quote-header-info > div.Mt\(15px\) > div.D\(ib\).Mt\(-5px\).Mend\(20px\).Maw\(56\%\)--tab768.Maw\(52\%\).Ov\(h\).smartphone_Maw\(85\%\).smartphone_Mend\(0px\) > div.D\(ib\) > h1')
+    ticker = ticker.get_text()
+    ticker = ticker.split(')')[-2].split('(')[-1]
+
+    beforeDate = soup.select_one(
+        '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child(2) > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span').get_text()
+    jsonArray = []
+
     while 1 :
         i = i + 1
-
-        if i >= 2:
-            break
 
         print(i)
 
@@ -80,8 +74,12 @@ def crawlingLoopImpl(jsonArray):
         params = {'ticker': ticker, 'year': mysqlDateForm[0:4]}
         requestUrl = localhost + route + urllib.parse.urlencode(params)
         r = requests.get(requestUrl)
-        if int(r.text) < 250:
-            ""
+        # 해당 년도의 Dailly record가 250개 이상 있으면 이미 전에 크롤링 했다고 판단하고 넘긴다.
+        if int(r.text) >= 250:
+            print(f"count : {r.text} means already exists")
+            return
+        else:
+            print(f"count : {r.text} means the data doesn't exists")
 
         if date is None:
             print("date is None!!! break")
@@ -97,44 +95,32 @@ def crawlingLoopImpl(jsonArray):
 
         if str(open)[:-6].find('span') <= 0:
             continue
-        else:
-            print(open + " : open break")
+        elif open is None:
+            print(f"{open} : open break")
             break
 
         high = soup.select_one(
             '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(3) > span')
-        if high is not None:
-            ""
-            # print(high.get_text())
-        else:
-            print(high + " : high break")
+        if high is None:
+            print(f"{high} : high break")
             break
 
         low = soup.select_one(
             '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(4) > span')
-        if low is not None:
-            ""
-            # print(low.get_text())
-        else:
-            print(low + " : low break")
+        if low is None:
+            print(f"{low} : low break")
             break
 
         close = soup.select_one(
             '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(5) > span')
-        if close is not None:
-            ""
-            # print(close.get_text())
-        else:
-            print(close + " : close break")
+        if close is None:
+            print(f"{close} : close break")
             break
 
         volume = soup.select_one(
             '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td:nth-child(7) > span')
-        if volume is not None:
-            ""
-            # print(volume.get_text())
-        else:
-            print(volume + " : volume break")
+        if volume is None:
+            print(f"{volume} : volume break")
             break
 
         beforeDate = date.get_text()
@@ -143,3 +129,9 @@ def crawlingLoopImpl(jsonArray):
                   'high': high.get_text().replace(",", ""), 'low': low.get_text().replace(",", ""), 'close': close.get_text().replace(",", ""),
                   'volume': volume.get_text().replace(",", "")
         })
+
+
+    route = "dailies"
+    requestUrl = localhost + route
+    r = requests.post(requestUrl, json=jsonArray)
+    # print(r.text)

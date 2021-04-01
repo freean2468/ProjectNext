@@ -69,20 +69,31 @@ trait QuerySupport {
     val logger = LoggerFactory.getLogger(getClass)
 
 //    db.run(sql"select * from account_table".as[(String, String)])
-    db.run(sql"select count(*) from daily_table where date >= ${year}-01-01".as[String]) onComplete {
+    /** db.run(sql"""select count(*) from daily_table where date <= "2019-12-30" and ticker=${ticker}""".as[Int])
+     *  slick에서 date less than 연산이 정상 작동하지 않는다.
+     *  따라서 greater than 방법만으로 현재 year의 데이터가 들어 있는지 알아보는
+     *  우회 방법을 썼다.
+     */
+    db.run(sql"select count(*) from daily_table where date >= ${year}-01-01 and ticker=${ticker}".as[Int]) onComplete {
       case Failure(e) => prom.failure(e)
       case Success(s) => {
-        if (s(0).toInt < 250) {
+        val firstCount = s(0)
+        logger.info(s"${firstCount} in condition")
+        if (firstCount < 250) {
           prom.complete(Try(Ok(0)))
         } else {
-          db.run(sql"select count(*) from daily_table where date <= ${year}-12-31".as[String]) onComplete {
+          db.run(sql"""select count(*) from daily_table where date >= ${year+1}-01-01 and ticker=${ticker}""".as[Int]) onComplete {
             case Failure(e) => prom.failure(e)
             case Success(s2) => {
-              val count = s2(0).toInt
-              if (count < 250)
+              val secondCount = s2(0)
+              val diff = firstCount - secondCount
+              logger.info(s"secondCount : ${secondCount} in second")
+              logger.info(s"diff : ${diff} in second")
+              if (diff < 250 && diff > 0)
                 prom.complete(Try(Ok(0)))
-              else
-                prom.complete(Try(Ok(count)))
+              else {
+                prom.complete(Try(Ok(firstCount)))
+              }
             }
           }
         }
