@@ -36,6 +36,7 @@ import static com.mrhi.projectnext.object.ObjectAlgorithm.CLOSE_OPEN;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.FLUCTUATION_RATE_ONE_DAY;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.FLUCTUATION_RATE_SEVERAL_DAYS;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.HIGH_LOW;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.NASDAQ_CORRELATION;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.PROBABILITY_CONTINUITY_2DAYS_LOSE;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.RECOVERING;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS;
@@ -261,6 +262,10 @@ public class FragmentMain extends Fragment {
                     objectAnyChart.draw_PROBABILITY_CONTINUITY_2DAYS_LOSE(strSelectedAlgorithm, strSelectedTicker, viewGroup, resultList, CELL_DATE);
                 }
                     break;
+                case NASDAQ_CORRELATION:{
+                    List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithm_NASDAQ_CORRELATION(strSelectedTicker);
+                    objectAnyChart.draw_NADAQ_CORRELATION(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
+                }
                 default:
                     break;
             }

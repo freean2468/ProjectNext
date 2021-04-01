@@ -1,5 +1,7 @@
 package com.mrhi.projectnext.object;
 
+import android.util.Log;
+
 import com.mrhi.projectnext.model.ModelTicker;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class ObjectAlgorithm {
     public static final int FLUCTUATION_RATE_ONE_DAY = BUY_OPEN_SELL_CLOSE + 1;
     public static final int FLUCTUATION_RATE_SEVERAL_DAYS = FLUCTUATION_RATE_ONE_DAY + 1;
     public static final int PROBABILITY_CONTINUITY_2DAYS_LOSE = FLUCTUATION_RATE_SEVERAL_DAYS + 1;
+    public static final int NASDAQ_CORRELATION = PROBABILITY_CONTINUITY_2DAYS_LOSE + 1;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -60,6 +63,7 @@ public class ObjectAlgorithm {
 
         while (iterator.hasNext()) {
             ModelTicker modelTicker = iterator.next();
+            Log.d("debug", "ticker : " + modelTicker.getName());
             if (modelTicker.getName().equals(name)) {
                 return modelTicker;
             }
@@ -498,11 +502,6 @@ public class ObjectAlgorithm {
      * @author 허선영
      */
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_BUY_LOW(String name, int day0, int day1, int day2, int day3, int day4) {
-        /**
-         * rapunzel algorithm
-         * 저가에 매수 시 그날 종가, 다음날, 일주일 후, 한달 후, 6개월 후의 종가에 대한 수익률
-         */
-
         ModelTicker ticker = getTicker(name);
 
         //매수한 날 = today
@@ -689,6 +688,25 @@ public class ObjectAlgorithm {
 
         return dailyList;
     }//end of algorithmOLCDCase
+
+    /**
+     * 나스닥과 선택한 종목과의 하루 데이터 결합성 percentage
+     *
+     * @author 허선영
+     */
+    public List<ModelTicker.Daily> algorithm_NASDAQ_CORRELATION(String name){
+        /**
+         * 현재 선택한 종목
+         */
+        ModelTicker ticker = getTicker(name);
+
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        return dailyList;
+
+    }//end of NASDAQ_JOIN
 
     /**
      * 기준일의 종가 대비 다음날, 일주일, 2주, 한달 후 종가의 변동률

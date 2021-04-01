@@ -23,6 +23,7 @@
         <item>변동률평균_하루</item>
         <item>변동률평균_특정기간</item>
         <item>확률_2일_연속하락</item>
+        <item>NASDAQ_결합성</item>
     </string-array>
 
 </resources>
