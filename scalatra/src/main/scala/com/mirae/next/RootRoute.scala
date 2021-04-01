@@ -75,8 +75,19 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
       Future {
         contentType = formats("json")
         val logger = LoggerFactory.getLogger(getClass)
-        logger.info(params.get("ticker").get)
         selectDaily(params.getOrElse("ticker", halt(400)))
+      }
+    }
+  }
+
+  get("/isTickerDates/1?") {
+    new AsyncResult { override val is =
+      Future {
+        contentType = ""
+        val logger = LoggerFactory.getLogger(getClass)
+        logger.info(params.get("ticker").get)
+        logger.info(params.get("year").get)
+        selectCountTickerDates(params.getOrElse("ticker", halt(400)), params.getOrElse("year", halt(400)))
       }
     }
   }

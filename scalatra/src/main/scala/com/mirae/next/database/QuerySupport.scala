@@ -2,9 +2,11 @@ package com.mirae.next.database
 
 import com.mirae.next.database.Tables._
 import org.scalatra.{ActionResult, Ok}
+import org.slf4j.LoggerFactory
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api._
 
+import java.sql.Date
 import scala.concurrent.Promise
 import scala.util.{Failure, Success, Try}
 
@@ -61,6 +63,33 @@ trait QuerySupport {
 
   def selectDailyAll() =
     db.run(dailies.result)
+
+  def selectCountTickerDates(ticker: String, year: String) = {
+    val prom = Promise[ActionResult]()
+    val logger = LoggerFactory.getLogger(getClass)
+
+//    db.run(sql"select * from account_table".as[(String, String)])
+    db.run(sql"select count(*) from daily_table where date >= ${year}-01-01".as[String]) onComplete {
+      case Failure(e) => prom.failure(e)
+      case Success(s) => {
+        if (s(0).toInt < 250) {
+          prom.complete(Try(Ok(0)))
+        } else {
+          db.run(sql"select count(*) from daily_table where date <= ${year}-12-31".as[String]) onComplete {
+            case Failure(e) => prom.failure(e)
+            case Success(s2) => {
+              val count = s2(0).toInt
+              if (count < 250)
+                prom.complete(Try(Ok(0)))
+              else
+                prom.complete(Try(Ok(count)))
+            }
+          }
+        }
+      }
+    }
+    prom.future
+  }
 
   // def find(no: String) = db.run((for (account <- accounts if account.no === no) yield account).result.headOption) // imperative way
   def findDaily(date: String) =

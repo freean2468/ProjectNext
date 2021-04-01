@@ -27,3 +27,6 @@ select * from `next`.`daily_table`;
 select count(*) from `next`.`daily_table`;
 
 select count(*) from `next`.`daily_table` where ticker="AAPl";
+
+select count(*) from `next`.`daily_table` where (date between "2020-01-01" and "2020-12-31") and ticker="riot";
+select count(*) from `next`.`daily_table` where date >= "2020-01-01";
