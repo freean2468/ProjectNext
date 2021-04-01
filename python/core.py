@@ -9,7 +9,7 @@ import platform
 
 localhost = "http://127.0.0.1:8080/"
 
-SCROLL_PAUSE_SEC = 0.2
+SCROLL_PAUSE_SEC = 0.5
 
 def crawling (targetUrlList):
     # selenium에서 사용할 웹 드라이버 상대 경로 정보
@@ -55,6 +55,11 @@ def crawlingLoopImpl(driver):
     ticker = ticker.get_text()
     ticker = ticker.split(')')[-2].split('(')[-1]
 
+    route = "ticker/1?"
+    params = {'ticker': ticker}
+    requestUrl = localhost + route + urllib.parse.urlencode(params)
+    r = requests.post(requestUrl)
+
     beforeDate = soup.select_one(
         '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child(2) > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span').get_text()
     jsonArray = []
@@ -66,6 +71,10 @@ def crawlingLoopImpl(driver):
 
         date = soup.select_one(
             '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span')
+
+        if date is None:
+            print("date is None!!! break")
+            break
 
         mysqlDateForm = datetime.datetime.strptime(date.get_text(), '%b %d, %Y').strftime("%Y-%m-%d")
 
@@ -80,10 +89,6 @@ def crawlingLoopImpl(driver):
             return
         else:
             print(f"count : {r.text} means the data doesn't exists")
-
-        if date is None:
-            print("date is None!!! break")
-            break
 
         print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
 

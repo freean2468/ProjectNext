@@ -32,10 +32,10 @@ public class ObjectAlgorithm {
     public static final int BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS = BUY_LOW + 1;
     public static final int RECOVERING = BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS + 1;
     public static final int BUY_OPEN_SELL_CLOSE = RECOVERING + 1;
-    public static final int FLUCTUATION_RATE_ONE_DAY = BUY_OPEN_SELL_CLOSE + 1;
+    public static final int PROBABILITY_CONTINUITY_2DAYS_LOSE = BUY_OPEN_SELL_CLOSE + 1;
+    public static final int FLUCTUATION_RATE_ONE_DAY = PROBABILITY_CONTINUITY_2DAYS_LOSE + 1;
     public static final int FLUCTUATION_RATE_SEVERAL_DAYS = FLUCTUATION_RATE_ONE_DAY + 1;
-    public static final int PROBABILITY_CONTINUITY_2DAYS_LOSE = FLUCTUATION_RATE_SEVERAL_DAYS + 1;
-    public static final int NASDAQ_CORRELATION = PROBABILITY_CONTINUITY_2DAYS_LOSE + 1;
+    public static final int NASDAQ_CORRELATION = FLUCTUATION_RATE_SEVERAL_DAYS + 1;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 

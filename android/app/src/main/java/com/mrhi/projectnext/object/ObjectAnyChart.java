@@ -1963,7 +1963,8 @@ public class ObjectAnyChart {
         double correlation = 0.0;
 
         int count = 0;
-        for(int i=0;i<dailyList.size();i++){
+        int size = (dailyList.size() > dailyListNasdaq.size()) ? dailyListNasdaq.size() : dailyList.size();
+        for(int i = 0; i < size; i++){
             double dailyResult = dailyList.get(i).getClose() - dailyList.get(i).getOpen();
 
             double dailyResultNasdaq = dailyListNasdaq.get(i).getClose() - dailyListNasdaq.get(i).getOpen();
