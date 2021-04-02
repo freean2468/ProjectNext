@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ProjectNext</string>
 
-    <string name="host_name_for_service">아직 사용하지 말 것http://next.ap-northeast-2.elasticbeanstalk.com/</string>
+    <string name="host_name_for_service">http://next.ap-northeast-2.elasticbeanstalk.com/</string>
     <string name="host_name_for_development">http://10.0.2.2:8080/</string>
     <string name="host_name_in_mirae">http://192.168.0.10:8080/</string>
 

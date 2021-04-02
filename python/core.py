@@ -7,7 +7,11 @@ import urllib
 import datetime
 import platform
 
+
 localhost = "http://127.0.0.1:8080/"
+awshost = "http://next.ap-northeast-2.elasticbeanstalk.com/"
+# host = localhost
+host = awshost
 
 SCROLL_PAUSE_SEC = 1
 
@@ -81,12 +85,12 @@ def crawlingLoopImpl(driver):
             # 크롤링하기 전 이미 크롤링되어 있는지 확인
             route = "isTickerDates/1?"
             params = {'ticker': ticker, 'year': year}
-            requestUrl = localhost + route + urllib.parse.urlencode(params)
+            requestUrl = host + route + urllib.parse.urlencode(params)
             r = requests.get(requestUrl)
 
             route = "ticker/1?"
             params = {'ticker': ticker, 'year': year}
-            requestUrl = localhost + route + urllib.parse.urlencode(params)
+            requestUrl = host + route + urllib.parse.urlencode(params)
             requests.post(requestUrl)
 
         if int(r.text) == 1:
@@ -141,7 +145,7 @@ def crawlingLoopImpl(driver):
 
 
     route = "dailies"
-    requestUrl = localhost + route
+    requestUrl = host + route
     r = requests.post(requestUrl, json=jsonArray)
     # print(r.text)
 

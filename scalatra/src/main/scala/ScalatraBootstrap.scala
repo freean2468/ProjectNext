@@ -41,6 +41,7 @@ class ScalatraBootstrap extends LifeCycle{
       }
     }
 
+//    context.mount(new RootRouteServlet(db), "/")
     context.mount(new RootRouteServlet(db), "/")
   }
 }

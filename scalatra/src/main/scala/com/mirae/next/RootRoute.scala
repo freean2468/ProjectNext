@@ -3,12 +3,11 @@ package com.mirae.next
 import com.mirae.next.database.QuerySupport
 import com.mirae.next.database.Tables.{Daily, Ticker}
 import org.json4s.JsonAST.{JArray, JString}
-import org.json4s.jackson.Serialization
-import org.json4s.{DefaultFormats, Formats, JObject, JValue, ShortTypeHints}
+import org.json4s.{DefaultFormats, Formats, JValue}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
 import org.scalatra.servlet.{FileUploadSupport, MultipartConfig}
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{LoggerFactory}
 import slick.jdbc.JdbcBackend.Database
 
 import scala.xml.{Elem, Node}
