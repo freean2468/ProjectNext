@@ -13,19 +13,19 @@
     <string-array name="algorithmList">
         <item>가격평균_전일대비_거래량_100%_증가_high_매수</item>
         <item>가격평균_전일대비_거래량_100%_감소_low_매수</item>
-        <item>가격평균_가격상승_14일중_8일이상_14일째_매도</item>
-        <item>가격평균_가격_거래량상승_14일중_8일이상_14일째_매도</item>
+        <item>가격평균_가격상승_N일중_M일이상_N일째_매도</item>
+        <item>가격평균_가격_거래량상승_N일중_M일이상_N일째_매도</item>
         <item>가격평균_high_low</item>
         <item>가격평균_close_open</item>
         <item>가격평균_low매수</item>
-        <item>가격평균_연속하락_3일연속_close매수</item>
+        <item>가격평균_연속하락_N일연속_close매수</item>
         <item>평균시간_가격회복</item>
         <item>확률_open매수_close매도</item>
         <item>확률_N일_연속하락</item>
         <item>변동률평균_하루</item>
         <item>변동률평균_특정기간</item>
         <item>상관관계_NASDAQ</item>
-        <item>확률_약세장</item>
+        <item>빈도_약세장</item>
     </string-array>
 
 </resources>
