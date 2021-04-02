@@ -10,8 +10,8 @@ import platform
 
 localhost = "http://127.0.0.1:8080/"
 awshost = "http://next.ap-northeast-2.elasticbeanstalk.com/"
-# host = localhost
-host = awshost
+host = localhost
+# host = awshost
 
 SCROLL_PAUSE_SEC = 1
 
