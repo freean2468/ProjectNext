@@ -112,6 +112,22 @@ public class FragmentMain extends Fragment {
                 ObjectVolley objectVolley = ObjectVolley.getInstance(getContext());
                 objectVolley.toggleUseCase();
                 textViewHost.setText(objectVolley.getHostName());
+                /**
+                 * 최초 실행 시 서버에 현재 ticker 목록을 요청해 초기화.
+                 */
+                objectVolley.requestOnlyTickers(new ObjectVolley.RequestOnlyTickersListener() {
+                    @Override
+                    public void jobToDo() {
+                        String[] tickerList = this.getTickerList().toArray(new String[this.getTickerList().size()]);
+
+                        spinnerTickers.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, tickerList));
+                    }
+                }, new ObjectVolley.StandardErrorListener() {
+                    @Override
+                    public void jobToDo() {
+
+                    }
+                });
             }
         });
 
