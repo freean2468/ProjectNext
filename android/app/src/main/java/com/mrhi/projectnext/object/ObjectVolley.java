@@ -79,9 +79,8 @@ public class ObjectVolley {
 
         public UrlFactory() {}
 
-        public String getTickers() {
-            return hostName + ctx.getString(R.string.url_tickers_all);
-        }
+        public String getOnlyTickers() { return hostName + ctx.getString(R.string.url_only_tickers); }
+        public String getTickers() { return hostName + ctx.getString(R.string.url_tickers_all); }
         public String getDailies() {
             return hostName + ctx.getString(R.string.url_dailies_all);
         }
@@ -103,6 +102,42 @@ public class ObjectVolley {
         getRequestQueue().add(req);
     }
 
+    public void requestOnlyTickers(RequestOnlyTickersListener listener, StandardErrorListener errorListener) {
+        String url = urlFactory.getOnlyTickers();
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, listener, errorListener);
+        addToRequestQueue(request);
+    }
+
+    /**
+     * jobToDo 내용만 구현하고, 필드가 null인지 아닌지만 확인해서 사용
+     */
+    abstract public static class RequestOnlyTickersListener implements Response.Listener<JSONArray> {
+        private ArrayList<String> tickerList = new ArrayList<>();
+
+        @Override
+        public void onResponse(JSONArray response) {
+            try {
+                for (int i = 0; i < response.length(); ++i) {
+                    JSONObject jsonObject = response.getJSONObject(i);
+
+                    if (jsonObject == null) {
+                        Log.d("debug", "the ticker is null!");
+                    }
+
+                    tickerList.add(jsonObject.get("ticker").toString().trim());
+                }
+            } catch (JSONException je) {
+                je.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            jobToDo();
+        }
+
+        public abstract void jobToDo();
+        public ArrayList<String> getTickerList() { return tickerList; }
+    }
+
     public void requestTickers(RequestTickersListener listener, StandardErrorListener errorListener) {
         String url = urlFactory.getTickers();
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, listener, errorListener);
@@ -122,7 +157,7 @@ public class ObjectVolley {
                     JSONObject jsonObject = response.getJSONObject(i);
 
                     if (jsonObject == null) {
-                        Log.d("debug", "tickers are null!");
+                        Log.d("debug", "the ticker is null!");
                     }
 
                     tickerList.add(jsonObject.get("ticker").toString().trim());

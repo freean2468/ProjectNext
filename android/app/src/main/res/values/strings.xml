@@ -5,6 +5,7 @@
     <string name="host_name_for_development">http://10.0.2.2:8080/</string>
     <string name="host_name_in_mirae">http://192.168.0.10:8080/</string>
 
+    <string name="url_only_tickers">onlyTickers</string>
     <string name="url_tickers_all">tickers</string>
     <string name="url_dailies_all">dailies</string>
     <string name="url_daily">daily/1?</string>

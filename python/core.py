@@ -9,9 +9,11 @@ import platform
 
 localhost = "http://127.0.0.1:8080/"
 
-SCROLL_PAUSE_SEC = 0.5
+SCROLL_PAUSE_SEC = 1
 
-def crawling (targetUrlList):
+def crawling (number, logging, targetUrl, ):
+    logging.info("Thread %s: starting", number)
+
     # selenium에서 사용할 웹 드라이버 상대 경로 정보
     driverChrome = ''
 
@@ -23,24 +25,25 @@ def crawling (targetUrlList):
     # selenium의 webdriver에 앞서 설지한 chromediriver를 연동
     driver = webdriver.Chrome(driverChrome)
 
-    for targetUrl in targetUrlList:
-        # driver로 특정 페이지를 크롤링
-        driver.get(targetUrl)
+    # driver로 특정 페이지를 크롤링
+    driver.get(targetUrl)
 
-        last_height = 0
-        new_height = 0
+    last_height = 0
+    new_height = 0
 
-        #1년치는 for문 5번만 돌려도 됨
-        for i in range(1, 11):
-            # 스크롤 높이에 3000만큼 더 가져옴
-            new_height += 3000
+    #1년치는 for문 5번만 돌려도 됨
+    for i in range(1, 11):
+        # 스크롤 높이에 3000만큼 더 가져옴
+        new_height += 3000
 
-            # 끝까지 스크롤 다운
-            driver.execute_script("window.scrollTo("+str(last_height)+", "+str(new_height)+");")
+        # 끝까지 스크롤 다운
+        driver.execute_script("window.scrollTo("+str(last_height)+", "+str(new_height)+");")
 
-            time.sleep(SCROLL_PAUSE_SEC)
+        time.sleep(SCROLL_PAUSE_SEC)
 
-        crawlingLoopImpl(driver)
+    crawlingLoopImpl(driver)
+
+    logging.info("Thread %s: finishing", number)
 
 
 
@@ -55,11 +58,6 @@ def crawlingLoopImpl(driver):
     ticker = ticker.get_text()
     ticker = ticker.split(')')[-2].split('(')[-1]
 
-    route = "ticker/1?"
-    params = {'ticker': ticker}
-    requestUrl = localhost + route + urllib.parse.urlencode(params)
-    r = requests.post(requestUrl)
-
     beforeDate = soup.select_one(
         '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child(2) > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span').get_text()
     jsonArray = []
@@ -67,7 +65,7 @@ def crawlingLoopImpl(driver):
     while 1 :
         i = i + 1
 
-        print(i)
+        # print(i)
 
         date = soup.select_one(
             '#Col1-1-HistoricalDataTable-Proxy > section > div.Pb\(10px\).Ovx\(a\).W\(100\%\) > table > tbody > tr:nth-child('+ str(i) +') > td.Py\(10px\).Ta\(start\).Pend\(10px\) > span')
@@ -77,22 +75,28 @@ def crawlingLoopImpl(driver):
             break
 
         mysqlDateForm = datetime.datetime.strptime(date.get_text(), '%b %d, %Y').strftime("%Y-%m-%d")
+        year = mysqlDateForm[0:4]
 
-        # 크롤링하기 전 이미 크롤링되어 있는지 확인
-        route = "isTickerDates/1?"
-        params = {'ticker': ticker, 'year': mysqlDateForm[0:4]}
-        requestUrl = localhost + route + urllib.parse.urlencode(params)
-        r = requests.get(requestUrl)
-        # 해당 년도의 Dailly record가 250개 이상 있으면 이미 전에 크롤링 했다고 판단하고 넘긴다.
-        if int(r.text) >= 250:
-            print(f"count : {r.text} means already exists")
+        if i == 1:
+            # 크롤링하기 전 이미 크롤링되어 있는지 확인
+            route = "isTickerDates/1?"
+            params = {'ticker': ticker, 'year': year}
+            requestUrl = localhost + route + urllib.parse.urlencode(params)
+            r = requests.get(requestUrl)
+
+            route = "ticker/1?"
+            params = {'ticker': ticker, 'year': year}
+            requestUrl = localhost + route + urllib.parse.urlencode(params)
+            requests.post(requestUrl)
+
+        if int(r.text) == 1:
+            print(f"already exists so stops {ticker}:{year} crawling")
             return
-        else:
-            print(f"count : {r.text} means the data doesn't exists")
 
-        print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
+        # print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
 
         if date.get_text() == beforeDate:
+            print("comparing %s with %s : %s" % (beforeDate, date.get_text(), beforeDate == date.get_text()))
             continue
 
         open = soup.select_one(
@@ -140,3 +144,5 @@ def crawlingLoopImpl(driver):
     requestUrl = localhost + route
     r = requests.post(requestUrl, json=jsonArray)
     # print(r.text)
+
+

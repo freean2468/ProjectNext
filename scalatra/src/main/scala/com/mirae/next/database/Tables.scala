@@ -8,7 +8,7 @@ import slick.jdbc.MySQLProfile.api._
  */
 object Tables {
 
-  case class Ticker(ticker: String)
+  case class Ticker(ticker: String, year: Int)
 
   /** daily_table의 한 레코드를 모방한 case class
    *
@@ -24,10 +24,11 @@ object Tables {
 
   class Tickers(tag: Tag) extends Table[Ticker](tag, "ticker_table") {
     def ticker = column[String]("ticker")
+    def year = column[Int]("year")
 
-    def pkTicker = primaryKey("pk_ticker", ticker)
+    def pkTicker = primaryKey("pk_ticker_year", (ticker, year))
 
-    def * = ticker <> (Ticker.apply, Ticker.unapply)
+    def * = (ticker, year) <> (Ticker.tupled, Ticker.unapply)
   }
 
   val tickers = TableQuery[Tickers]

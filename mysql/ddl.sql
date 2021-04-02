@@ -6,8 +6,9 @@ drop table if exists daily_table;
 drop table if exists ticker_table;
 
 create table if not exists ticker_table(
-	ticker varchar(6) unique not null,
-    constraint pk_ticker primary key(ticker)
+	ticker varchar(6) not null,
+    year int not null,
+    constraint pk_ticker_year primary key(ticker, year)
 );
 
 create table if not exists daily_table(
@@ -27,6 +28,3 @@ select * from `next`.`daily_table`;
 select count(*) from `next`.`daily_table`;
 
 select count(*) from `next`.`daily_table` where ticker="AAPl";
-
-select count(*) from `next`.`daily_table` where (date between "2020-01-01" and "2020-12-31") and ticker="riot";
-select count(*) from `next`.`daily_table` where date <= "2020-12-31";

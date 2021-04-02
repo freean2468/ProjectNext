@@ -61,11 +61,20 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
     }
   }
 
+  get("/onlyTickers") {
+    new AsyncResult { override val is =
+      Future {
+        contentType = formats("json")
+        selectOnlyTickers()
+      }
+    }
+  }
+
   get("/ticker/1?") {
     new AsyncResult { override val is =
       Future {
         contentType = formats("json")
-        selectTicker(params.getOrElse("ticker", halt(400)))
+        selectTicker(params.getOrElse("ticker", halt(400)), params.getOrElse("year", halt(400)).toInt)
       }
     }
   }
@@ -85,9 +94,9 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
       Future {
         contentType = ""
         val logger = LoggerFactory.getLogger(getClass)
-        logger.info(params.get("ticker").get)
-        logger.info(params.get("year").get)
-        selectCountTickerDates(params.getOrElse("ticker", halt(400)), params.getOrElse("year", halt(400)))
+//        logger.info(params.get("ticker").get)
+//        logger.info(params.get("year").get)
+        isTickerDates(params.getOrElse("ticker", halt(400)), params.getOrElse("year", halt(400)).toInt)
       }
     }
   }
@@ -99,8 +108,9 @@ trait RootRoute extends ScalatraBase with JacksonJsonSupport with FutureSupport 
     new AsyncResult { override val is =
       Future {
         contentType = ""
-        val ticker = params.getOrElse("ticker", "")
-        insertTicker(Ticker(ticker))
+        val ticker = params.getOrElse("ticker", halt(400))
+        val year = params.getOrElse("year", halt(400)).toInt
+        insertTicker(Ticker(ticker, year))
       }
     }
   }

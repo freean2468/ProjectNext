@@ -74,14 +74,10 @@ public class FragmentMain extends Fragment {
         String[] strAlgorithmList = getResources().getStringArray(R.array.algorithmList);
         TextView textViewHost = view.findViewById(R.id.textViewHost);
         textViewHost.setText(ObjectVolley.getInstance(getContext()).getHostName());
-        ;
         Switch switchChangeIp = view.findViewById(R.id.switchChangeIp);
         Spinner spinnerAlgorithmList = view.findViewById(R.id.spinnerAlgorithmList);
-        ;
         Spinner spinnerTickers = view.findViewById(R.id.spinnerTickers);
-        ;
         Button buttonExecute = view.findViewById(R.id.buttonExecute);
-        ;
 
         spinnerAlgorithmList.setAdapter(new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, strAlgorithmList));
         linearLayout = view.findViewById(R.id.linearLayout);
@@ -91,7 +87,7 @@ public class FragmentMain extends Fragment {
         /**
          * 최초 실행 시 서버에 현재 ticker 목록을 요청해 초기화.
          */
-        objectVolley.requestTickers(new ObjectVolley.RequestTickersListener() {
+        objectVolley.requestOnlyTickers(new ObjectVolley.RequestOnlyTickersListener() {
             @Override
             public void jobToDo() {
                 String[] tickerList = this.getTickerList().toArray(new String[this.getTickerList().size()]);
