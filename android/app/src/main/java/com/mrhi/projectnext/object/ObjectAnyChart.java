@@ -218,14 +218,15 @@ public class ObjectAnyChart {
 
     /**
      * 최고가와 최저가의 차이를 평균을 구해 비교하는 함수
+     *
      * @param strSelectedAlgorithm
      * @param viewGroup
      * @param valueList
      * @author 김택민
      */
 
-    public void draw_HIGH_LOW(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
-    {
+    public void draw_HIGH_LOW(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList) {
+
         //Pooh algorithm
         double minValueAvg = 0.0;
         double maxValueAvg = 0.0;
@@ -242,14 +243,14 @@ public class ObjectAnyChart {
 
         /**
          * 애니차트 라이브러리에 있는 애니 차트 뷰를 불러온다
-        */
+         */
         AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
 
         /**
          * 애니 차트 뷰를 리니어 레이아웃을 새로 생성하여 위치시킨다
          * 내부 여백을 왼쪽에만 10을 주었다.
          * 레이아웃 세팅뒤 뷰를 추가하였다.
-        */
+         */
         anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -265,7 +266,7 @@ public class ObjectAnyChart {
                 1
         ));
 
-        linearLayout.setPadding(10,10,10,10);
+        linearLayout.setPadding(10, 10, 10, 10);
 
         viewGroup.addView(linearLayout);
 
@@ -275,7 +276,7 @@ public class ObjectAnyChart {
 
         Cartesian cartesian = AnyChart.column();
 
-        List<DataEntry>data = new ArrayList<>();
+        List<DataEntry> data = new ArrayList<>();
         data.add(new ValueDataEntry("최대값 평균", Helper.round(maxValueAvg, 2)));
         data.add(new ValueDataEntry("최소값 평균", Helper.round(minValueAvg, 2)));
 

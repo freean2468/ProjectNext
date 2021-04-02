@@ -445,8 +445,7 @@ public class ObjectAlgorithm {
      * 최고가 평균과 최저가의 평균값의 차이를 평균을 내어서 보여주어 투자 여부를 결정하게 한다.
      * @author 김택민
      */
-    public LinkedList<Double> algorithm_HIGH_LOW(String name)
-    {
+    public LinkedList<Double> algorithm_HIGH_LOW(String name) {
         double maxValueAvg = 0.0;
         double minValueAvg = 0.0;
         double avgGap = 0.0;
@@ -470,7 +469,7 @@ public class ObjectAlgorithm {
         {
             maxValueAvg += dailyList.get(i).getHigh();
             minValueAvg += dailyList.get(i).getLow();
-            avgGap += maxValueAvg - minValueAvg;
+            avgGap += dailyList.get(i).getHigh() - dailyList.get(i).getLow();
         }
         maxValueAvg /= dailyList.size();
         minValueAvg /= dailyList.size();
