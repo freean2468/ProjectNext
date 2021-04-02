@@ -6,6 +6,7 @@ import com.mrhi.projectnext.model.ModelTicker;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class ObjectAlgorithm {
     public static final int FLUCTUATION_RATE_ONE_DAY = PROBABILITY_CONTINUITY_2DAYS_LOSE + 1;
     public static final int FLUCTUATION_RATE_SEVERAL_DAYS = FLUCTUATION_RATE_ONE_DAY + 1;
     public static final int NASDAQ_CORRELATION = FLUCTUATION_RATE_SEVERAL_DAYS + 1;
+    public static final int CLOSE_LIKE_OR_SAME_DAY = NASDAQ_CORRELATION + 1;
 
     private static ObjectAlgorithm instance = new ObjectAlgorithm();
 
@@ -151,16 +153,22 @@ public class ObjectAlgorithm {
         return resultList;
     }
 
+    /**
+     * 전날 대비 volume이 100%이상 하락한 날 Low에 매수 시
+     * 다음 날 수익률, 7일 후 수익률, 30일 후 수익률, 180일 후 수익률
+     * @author 김택민
+     */
+
     public LinkedList<ArrayList<ModelTicker.Daily>> algorithm_VOLUME_2_TIMES_DECREASED_MORE_THAN_YESTERDAY(String name, int day1, int day2, int day3, int day4) {
         /**
          * 현재 선택된 종목으로 알고리즘 실행
          */
         ModelTicker ticker = getTicker(name);
 
+
         /**
-         * 시나리오 2
-         * 전날 대비 volume이 100%이상 하락한 날 Low에 매수 시
-         * 다음 날 수익률, 7일 후 수익률, 30일 후 수익률, 180일 후 수익률
+         * 사는 시점과 다음날 수익률, 7일후 수익률, 30일후 수익률, 180일후 수익률을
+         * 구하고 각각 담기위해 5개의 ArrayList를 선언하였다.
          */
 
         ArrayList<ModelTicker.Daily> buyPositions = new ArrayList(){};
@@ -168,14 +176,25 @@ public class ObjectAlgorithm {
         ArrayList<ModelTicker.Daily> positions2 = new ArrayList<>();
         ArrayList<ModelTicker.Daily> positions3 = new ArrayList<>();
         ArrayList<ModelTicker.Daily> positions4 = new ArrayList<>();
-
+        /**
+         * 전체 날짜를 정렬하기 위한 작업이다.
+         * 내부에서 정렬해주는 Set을 이용하여 값을 담은뒤
+         * 정렬된 그대로를 ArrayList에 담아준다.
+         */
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
         dailyList.addAll(dailySet);
 
+
         LinkedList<ArrayList<ModelTicker.Daily>> resultList = new LinkedList<>();
 
         ModelTicker.Daily yesterday = null;
+
+        /**
+         * 전체 날짜중 어제 거래량이 100% 떨어졌고 오늘 거래량보다 적으면 조건을 실행한다.
+         * try catch가 있는 이유는 실제 날짜 31일이 넘어갈경우 인덱스를 벗어날수 있기에 작성된 구문이다.
+         * 모든 조건을 수행한뒤 다음날,7일후,30일후, 180일후의 값을 ArrayList에 담는다.
+         */
 
         for (int i = 0; i < dailyList.size(); ++i) {
             ModelTicker.Daily today = dailyList.get(i);
@@ -216,6 +235,9 @@ public class ObjectAlgorithm {
             }
             yesterday = today;
         }
+        /**
+         * 결과 값을 담는 LinkedList에 각각의 ArrayList를 담아준다.
+         */
         resultList.add(buyPositions);
         resultList.add(positions1);
         resultList.add(positions2);
@@ -419,10 +441,9 @@ public class ObjectAlgorithm {
     }//end of algorithm_SEVERAL_DAYS_INCREASE_OUT_OF_2_WEEKS_AS_WELL_AS_VOLUME
 
     /**
-     * 시나리오 3
      * 최고가와 최저가의 평균을 내서 막대 그래프에 보여준다.
      * 최고가 평균과 최저가의 평균값의 차이를 평균을 내어서 보여주어 투자 여부를 결정하게 한다.
-     *
+     * @author 김택민
      */
     public LinkedList<Double> algorithm_HIGH_LOW(String name)
     {
@@ -432,9 +453,18 @@ public class ObjectAlgorithm {
 
         ModelTicker ticker = getTicker(name);
 
+        /**
+         * 전체 날짜를 정렬하기 위한 작업이다.
+         * 내부에서 정렬해주는 Set을 이용하여 값을 담은뒤
+         * 정렬된 그대로를 ArrayList에 담아준다.
+         */
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
         dailyList.addAll(dailySet);
+
+        /**
+         * 최고값과 최저가의 평균을 낸뒤 그 차이값을 avgGap 변수에 넣어준다.
+         */
 
         for(int i = 0 ; i < dailyList.size(); i++)
         {
@@ -448,14 +478,20 @@ public class ObjectAlgorithm {
 
         LinkedList<Double> valueList = new LinkedList<Double>();
 
+        /**
+         * 링크드리스트에 최고값 평균,최저가 평균, 평균값의 차이를 담는다.
+         */
         valueList.add(maxValueAvg);
         valueList.add(minValueAvg);
         valueList.add(avgGap);
 
         return valueList;
     }
-    //
 
+    /**
+     * 장이 닫힐때와 그 다음날에 장이 열렸을때의 가격 차이를 모두 얻어서 평균을 내주는 알고리즘
+     * @author 김택민
+    */
     public LinkedList<Double> algorithm_CLOSE_OPEN(String name)
     {
         //Pooh Algorithm
@@ -464,10 +500,18 @@ public class ObjectAlgorithm {
         double gapValue = 0.0;
         ModelTicker ticker = getTicker(name);
 
+        /**
+         * 전체 날짜를 정렬하기 위한 작업이다.
+         * 내부에서 정렬해주는 Set을 이용하여 값을 담은뒤
+         * 정렬된 그대로를 ArrayList에 담아준다.
+         */
         Set<ModelTicker.Daily> dailySet = ticker.getCopy();
         List<ModelTicker.Daily> dailyList = new ArrayList<>();
         dailyList.addAll(dailySet);
 
+        /**
+         * 비교를 위해 yesterday와 today를 설정하였다.
+         */
         ModelTicker.Daily yesterday = null;
         ModelTicker.Daily today = null;
 
@@ -475,6 +519,12 @@ public class ObjectAlgorithm {
 
         for(int i = 0 ; i < dailyList.size(); ++i)
         {
+            /**
+             * 처음 들어왔을때 yesterday의 값이 변동되는 곳이 없었으니 그대로 null 이다.
+             * today에 담긴값을 yesterday에게 준다.
+             * 어제의 장이 닫는 시간과 장이 열린 값의 차이를 구하여
+             * 별도로 선언한 링크드리스트 gapList에 담아주고 모두 담았으면 gapList를 리턴한다.
+             */
             today = dailyList.get(i);
             if(yesterday!=null)
             {
@@ -824,6 +874,56 @@ public class ObjectAlgorithm {
         return resultList;
 
     }//end of algorithm_PROBABILITY_CONTINUITY_2DAYS_LOSE
+
+    /**
+     * 종료가 금액이 최저가와 비슷하거나 일치 할경우가 언제인지 구하는 알고리즘
+     * @param name
+     * @return
+     * author 김택민
+     */
+
+    public ArrayList<Date> algorithm_CLOSE_VALUE_SAME_OR_LIKE_LOW(String name)
+    {
+        /**
+         * 골라낸 날짜를 보관할 Arraylist를 선언한다.
+        */
+        double near = 0.0;
+        Date date = new Date();
+        ArrayList<Date> dateList = new ArrayList<Date>();
+
+        /**
+         * 선택된 종목으로 알고리즘을 실행한다.
+         *
+        */
+        ModelTicker ticker = getTicker(name);
+        /**
+         * 전체 날짜를 정렬하기 위한 작업이다.
+         * 내부에서 정렬해주는 Set을 이용하여 값을 담은뒤
+         * 정렬된 그대로를 ArrayList에 담아준다.
+        */
+        Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+
+        for(int i = 0 ; i < dailyList.size(); i++)
+        {
+            /**
+             * 근사 값을 구하기 위한 알고리즘이다.
+             * 시장이 닫는 시간을 기준으로 -3% +3% 값을 이용하여 비교한뒤
+             * 골라진 날짜만을 dateList에 담는다.
+             */
+            near = dailyList.get(i).getClose();
+            double smallValue = near - (near * 0.03);
+            double bigValue = near + (near * 0.03);
+
+            if(smallValue <= near && near <= bigValue)
+            {
+                dateList.add(dailyList.get(i).getDate());
+            }
+        }
+        return dateList;
+    }
 
 }
 

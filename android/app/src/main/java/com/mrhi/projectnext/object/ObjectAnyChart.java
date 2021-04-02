@@ -13,6 +13,7 @@ import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.HighLowDataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
+import com.anychart.charts.Pie;
 import com.anychart.charts.Stock;
 import com.anychart.core.cartesian.series.Column;
 import com.anychart.core.cartesian.series.Line;
@@ -21,8 +22,10 @@ import com.anychart.data.Mapping;
 import com.anychart.data.Set;
 import com.anychart.data.Table;
 import com.anychart.data.TableMapping;
+import com.anychart.enums.Align;
 import com.anychart.enums.Anchor;
 import com.anychart.enums.HoverMode;
+import com.anychart.enums.LegendLayout;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.MovingAverageType;
 import com.anychart.enums.Position;
@@ -33,6 +36,7 @@ import com.mrhi.projectnext.help.Helper;
 import com.mrhi.projectnext.model.ModelTicker;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -212,6 +216,14 @@ public class ObjectAnyChart {
     }
     */
 
+    /**
+     * 최고가와 최저가의 차이를 평균을 구해 비교하는 함수
+     * @param strSelectedAlgorithm
+     * @param viewGroup
+     * @param valueList
+     * @author 김택민
+     */
+
     public void draw_HIGH_LOW(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> valueList)
     {
         //Pooh algorithm
@@ -257,6 +269,9 @@ public class ObjectAnyChart {
 
         viewGroup.addView(linearLayout);
 
+        /**
+         *  막대그래프를 생성하고 필요한 데이터를 넣어준다.
+         */
 
         Cartesian cartesian = AnyChart.column();
 
@@ -287,12 +302,17 @@ public class ObjectAnyChart {
         cartesian.xAxis(0).title("최대값 평균");
         cartesian.yAxis(0).title("최소값 평균");
 
+        //만들어진 차트를 뷰에 세트한다.
         anyChartView.setChart(cartesian);
 
         TextView textView = new TextView(viewGroup.getContext());
         textView.setText("최소값과 최대값 차이의 평균값 : " +avgGap );
         linearLayout.addView(textView);
     }
+    /**
+     * 장이 닫히고 장이 다시열리는 사이의 평균값을 계산하는 함수
+     * @auchor 김택민
+    */
 
     public void draw_CLOSE_OPEN(String strSelectedAlgorithm, ViewGroup viewGroup, LinkedList<Double> gapList)
     {
@@ -366,7 +386,7 @@ public class ObjectAnyChart {
         anyChartView.setChart(cartesian);
 
         TextView textView = new TextView(viewGroup.getContext());
-        textView.setText("장이 닫힐떄 가격과 열릴때 시가와의 차이를 구한다");
+        textView.setText("장이 닫힐떄 가격과 열릴때 시가와의 차이");
         linearLayout.addView(textView);
         TextView textView2 = new TextView(viewGroup.getContext());
         textView2.setText("알고리즘 매칭 횟수 : " + gapList.size());
@@ -572,6 +592,107 @@ public class ObjectAnyChart {
             linearLayout.addView(textViewEarningRateDay4);
         }
     }
+
+    public void drawCloseValueSameOrLikeLowValue(String strSelectedAlgorithm, String selectedTicker, ViewGroup viewGroup, ArrayList<Date> dateList)
+    {
+        //Pooh Algorithm
+        /**
+         * 레이아웃을 백지상태로 초기화 한다.
+         * 알고리즘이 몇번 적용됐는지 확인 목적으로 size 변수를 선언하였다.
+         */
+        viewGroup.removeAllViewsInLayout();
+
+
+        //비슷하거나 같은값과 전체 값을 얻기위한 변수 선언
+        double likeAndSame = 0.0;
+        double alldayValue = 0.0;
+
+        /**
+         * ticker 설정을 위해 싱글톤으로 선언된 objectAlgorithm의 인스턴스를 불러왔다.
+        */
+        ObjectAlgorithm objectAlgorithm = ObjectAlgorithm.getInstance();
+        ModelTicker ticker = objectAlgorithm.getTicker(selectedTicker);
+
+        /**
+         * 전체 날짜를 정렬하기 위한 작업이다.
+         * 내부에서 정렬해주는 Set을 이용하여 값을 담은뒤
+         * 정렬된 그대로를 ArrayList에 담아준다.
+         * 다른 클래스에 있는 ArrayList를 얻어와서 데이터를 사용하였다.
+         */
+
+        java.util.Set<ModelTicker.Daily> dailySet = ticker.getCopy();
+        List<ModelTicker.Daily> dailyList = new ArrayList<>();
+        dailyList.addAll(dailySet);
+
+        /**
+         * 차트를 표시할 뷰를 생성하고
+         * 입력된 정보로 LinearLayout 을 만든뒤
+         * 뷰를 추가한다.
+         */
+
+        AnyChartView anyChartView = new AnyChartView(viewGroup.getContext());
+
+        anyChartView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+        anyChartView.setPadding(10,0,0,0);
+        viewGroup.addView(anyChartView);
+
+        LinearLayout linearLayout = new LinearLayout(viewGroup.getContext());
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1));
+
+        linearLayout.setPadding(10,10,10,10);
+        viewGroup.addView(linearLayout);
+
+        /**
+         * 원형 차트를 선언하고 전체일수와 근사치에 해당하는 값을 차트에
+         * 넣어준다. 전체 값을 넣은 이유는 비교대상이 없으면 100%로 무조건 표시되기 때문에
+         * 비교 대상 추가를 위해 전체 일수를 접어넣었다.
+         */
+
+        Pie pieChart = AnyChart.pie();
+        List<DataEntry>data = new ArrayList<>();
+        alldayValue = (dailySet.size());
+        likeAndSame = ((double)dateList.size() / (double)dailyList.size()) *  100;
+        data.add(new ValueDataEntry("전체 날짜",alldayValue));
+        data.add(new ValueDataEntry("비슷하거나 같은 값",likeAndSame));
+
+
+        pieChart.data(data);
+        pieChart.labels().position("outside");
+
+        pieChart.legend().title().enabled(true);
+        pieChart.legend().title()
+                .text("Retail channels")
+                .padding(0d,0d,10d,0d);
+
+        pieChart.legend()
+                .position("center-bottom")
+                .itemsLayout(LegendLayout.HORIZONTAL)
+                .align(Align.CENTER);
+
+
+        pieChart.tooltip()
+                .titleFormat("{%x}")
+                .position(Position.CENTER_BOTTOM)
+                .anchor(Anchor.CENTER_BOTTOM)
+                .offsetX(0d)
+                .offsetY(5d)
+                .format("${%value}{groupSeparator : } ");
+
+        pieChart.animation(false);
+        pieChart.title("종료가 금액이 최저가와 비슷하거나 일치할경우");
+
+        pieChart.tooltip().positionMode(TooltipPositionMode.POINT);
+        pieChart.interactivity().hoverMode(HoverMode.BY_X);
+
+        anyChartView.setChart(pieChart);
+    }
+
 
     public void draw_BUY_OPEN_SELL_CLOSE(String strSelectedAlgorithm, ViewGroup viewGroup, ArrayList<ModelTicker.Daily> resultList) {
         /**
@@ -1790,6 +1911,10 @@ public class ObjectAnyChart {
         }//end of if
 
     }//end of CloseFluctuationRate
+
+
+
+
 
     /**
      * 전날 대비 종가가 이틀 연속 하락했을 때, 3일째에 상승할 확률

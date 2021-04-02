@@ -25,6 +25,7 @@
         <item>변동률평균_하루</item>
         <item>변동률평균_특정기간</item>
         <item>상관관계_NASDAQ</item>
+        <item>확률_약세장</item>
     </string-array>
 
 </resources>

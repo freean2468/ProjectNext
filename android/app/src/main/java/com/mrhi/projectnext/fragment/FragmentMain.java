@@ -26,12 +26,14 @@ import com.mrhi.projectnext.object.ObjectAnyChart;
 import com.mrhi.projectnext.object.ObjectVolley;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.mrhi.projectnext.object.ObjectAlgorithm.BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.BUY_LOW;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.BUY_OPEN_SELL_CLOSE;
+import static com.mrhi.projectnext.object.ObjectAlgorithm.CLOSE_LIKE_OR_SAME_DAY;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.CLOSE_OPEN;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.FLUCTUATION_RATE_ONE_DAY;
 import static com.mrhi.projectnext.object.ObjectAlgorithm.FLUCTUATION_RATE_SEVERAL_DAYS;
@@ -262,6 +264,11 @@ public class FragmentMain extends Fragment {
                     List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithm_NASDAQ_CORRELATION(strSelectedTicker);
                     objectAnyChart.draw_NADAQ_CORRELATION(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
                 }
+                case CLOSE_LIKE_OR_SAME_DAY:{
+                    ArrayList<Date> dailyList = objectAlgorithm.algorithm_CLOSE_VALUE_SAME_OR_LIKE_LOW(strSelectedTicker);
+                    objectAnyChart.drawCloseValueSameOrLikeLowValue(strSelectedAlgorithm,strSelectedTicker,viewGroup,dailyList);
+                }
+                    break;
                 default:
                     break;
             }
