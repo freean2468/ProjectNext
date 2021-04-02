@@ -276,8 +276,8 @@ public class ObjectAnyChart {
         Cartesian cartesian = AnyChart.column();
 
         List<DataEntry>data = new ArrayList<>();
-        data.add(new ValueDataEntry("최대값 평균",maxValueAvg));
-        data.add(new ValueDataEntry("최소값 평균",minValueAvg));
+        data.add(new ValueDataEntry("최대값 평균", Helper.round(maxValueAvg, 2)));
+        data.add(new ValueDataEntry("최소값 평균", Helper.round(minValueAvg, 2)));
 
         Column column = cartesian.column(data);
 
@@ -306,7 +306,7 @@ public class ObjectAnyChart {
         anyChartView.setChart(cartesian);
 
         TextView textView = new TextView(viewGroup.getContext());
-        textView.setText("최소값과 최대값 차이의 평균값 : " +avgGap );
+        textView.setText("최소값과 최대값 차이의 평균값 : " + Helper.round(avgGap, 2));
         linearLayout.addView(textView);
     }
     /**
@@ -371,7 +371,7 @@ public class ObjectAnyChart {
                 .format("${%Value}{groupSeparator : }");
 
         cartesian.animation(false);
-        cartesian.title("어제 닫힐때와 오늘 열릴때의 가격 비교");
+        cartesian.title("어제 종과와 오늘 시가의 가격 비교");
 
         cartesian.yScale().minimum(0d);
 
@@ -593,8 +593,7 @@ public class ObjectAnyChart {
         }
     }
 
-    public void drawCloseValueSameOrLikeLowValue(String strSelectedAlgorithm, String selectedTicker, ViewGroup viewGroup, ArrayList<Date> dateList)
-    {
+    public void draw_CLOSE_VALUE_SAME_OR_LIKE_LOW(String strSelectedAlgorithm, String selectedTicker, ViewGroup viewGroup, ArrayList<Date> dateList) {
         //Pooh Algorithm
         /**
          * 레이아웃을 백지상태로 초기화 한다.
@@ -658,8 +657,8 @@ public class ObjectAnyChart {
         List<DataEntry>data = new ArrayList<>();
         alldayValue = (dailySet.size());
         likeAndSame = ((double)dateList.size() / (double)dailyList.size()) *  100;
-        data.add(new ValueDataEntry("전체 날짜",alldayValue));
-        data.add(new ValueDataEntry("비슷하거나 같은 값",likeAndSame));
+        data.add(new ValueDataEntry("전체 일 수", alldayValue));
+        data.add(new ValueDataEntry("약세장 일 수", likeAndSame));
 
 
         pieChart.data(data);
@@ -685,14 +684,13 @@ public class ObjectAnyChart {
                 .format("${%value}{groupSeparator : } ");
 
         pieChart.animation(false);
-        pieChart.title("종료가 금액이 최저가와 비슷하거나 일치할경우");
+        pieChart.title("약세장 비율");
 
         pieChart.tooltip().positionMode(TooltipPositionMode.POINT);
         pieChart.interactivity().hoverMode(HoverMode.BY_X);
 
         anyChartView.setChart(pieChart);
     }
-
 
     public void draw_BUY_OPEN_SELL_CLOSE(String strSelectedAlgorithm, ViewGroup viewGroup, ArrayList<ModelTicker.Daily> resultList) {
         /**
@@ -1911,10 +1909,6 @@ public class ObjectAnyChart {
         }//end of if
 
     }//end of CloseFluctuationRate
-
-
-
-
 
     /**
      * 전날 대비 종가가 이틀 연속 하락했을 때, 3일째에 상승할 확률

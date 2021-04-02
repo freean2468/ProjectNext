@@ -228,7 +228,7 @@ public class FragmentMain extends Fragment {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS(strSelectedTicker, day1, day2, day3, day4, decreaseDay);
                     objectAnyChart.draw_BUY_CLOSE_WHEN_DECREASED_SEVERAL_DAYS(strSelectedAlgorithm, viewGroup, resultList, day1, day2, day3, day4, decreaseDay);
                 }
-                break;
+                    break;
                 case RECOVERING: {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_RECOVERING(strSelectedTicker);
                     objectAnyChart.draw_RECOVERING(strSelectedAlgorithm, viewGroup, resultList);
@@ -253,6 +253,7 @@ public class FragmentMain extends Fragment {
                     LinkedList<ArrayList<ModelTicker.Daily>> resultList = objectAlgorithm.algorithm_FLUCTUATION_RATE_SEVERAL_DAYS(strSelectedTicker, day1, day2, day3, day4);
                     objectAnyChart.draw_FLUCTUATION_RATE_SEVERAL_DAYS(strSelectedAlgorithm, strSelectedTicker, viewGroup, resultList, day1, day2, day3, day4);
                 }
+                    break;
                 case PROBABILITY_CONTINUITY_2DAYS_LOSE:{
                     int CELL_DATE = 2;
 
@@ -264,9 +265,10 @@ public class FragmentMain extends Fragment {
                     List<ModelTicker.Daily> dailyList = objectAlgorithm.algorithm_NASDAQ_CORRELATION(strSelectedTicker);
                     objectAnyChart.draw_NADAQ_CORRELATION(strSelectedAlgorithm, strSelectedTicker, viewGroup, dailyList);
                 }
+                    break;
                 case CLOSE_LIKE_OR_SAME_DAY:{
                     ArrayList<Date> dailyList = objectAlgorithm.algorithm_CLOSE_VALUE_SAME_OR_LIKE_LOW(strSelectedTicker);
-                    objectAnyChart.drawCloseValueSameOrLikeLowValue(strSelectedAlgorithm,strSelectedTicker,viewGroup,dailyList);
+                    objectAnyChart.draw_CLOSE_VALUE_SAME_OR_LIKE_LOW(strSelectedAlgorithm,strSelectedTicker,viewGroup,dailyList);
                 }
                     break;
                 default:
