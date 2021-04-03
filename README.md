@@ -22,5 +22,4 @@
  * MacOS
 
 # 실행 동영상
-https://www.youtube.com/watch?v=cznyGZejj08
-
+https://youtu.be/-PFEnU79u6o
