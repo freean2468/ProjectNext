@@ -3,8 +3,7 @@ import logging
 import threading
 
 format = "%(asctime)s: %(message)s"
-logging.basicConfig(format=format, level=logging.INFO,
-                    datefmt="%H:%M:%S")
+logging.basicConfig(format=format, level=logging.INFO, datefmt="%H:%M:%S")
 
 # 1년치로 끊어서 각 종목의 URL을 입력하세요.
 targetUrl = [
