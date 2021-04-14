@@ -10,7 +10,7 @@
    팀원 : 허선영, 김택민
    
  * 태스크 관리(trello) : https://trello.com/b/S9j6XRw2/projectnext
- * 일정관리(google sheets) : https://docs.google.com/spreadsheets/d/1Nz2VmDd-npezQMWdx8pgW7FzKBP7sRxVOCLgtbM-2Sw/edit#gid=0
+ * 일정관리(google sheets) : https://docs.google.com/spreadsheets/d/1Nz2VmDd-npezQMWdx8pgW7FzKBP7sRxVOCLgtbM-2Sw/edit?usp=sharing
 
 ### 개발 환경
  - java 15.0.2
